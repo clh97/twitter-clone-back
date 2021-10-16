@@ -1,0 +1,55 @@
+{
+    "tasks": [
+        {
+            "type": "cppbuild",
+            "label": "C/C++: g++ build active file",
+            "command": "/usr/bin/g++",
+            "args": [
+                "-std=c++17",
+                "-fdiagnostics-color=always",
+                "-g",
+                "${file}",
+                "-o",
+                "${fileDirname}/bin/${fileBasenameNoExtension}"
+            ],
+            "options": {
+                "cwd": "${fileDirname}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+        },
+        {
+            "type": "cppbuild",
+            "label": "C/C++: g++ build GLFW project",
+            "command": "/usr/bin/g++",
+            "args": [
+                "-lglfw",
+                "-lGL",
+                "-lm",
+                "-lX11",
+                "-lpthread",
+                "-lXrandr",
+                "-ldl",
+                "-std=c++17",
+                "-fdiagnostics-color=always",
+                "-g",
+                "${file}",
+                "${fileDirname}/glad/glad.c",
+                "-o",
+                "${fileDirname}/bin/main"
+            ],
+            "options": {
+                "cwd": "${fileDirname}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+        }
+    ],
+    "version": "2.0.0"
+}
