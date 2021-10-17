@@ -1,12 +1,47 @@
 import express from 'express';
+import helmet from 'helmet';
+import controllers from './controllers';
+import RouteConfig from './controllers/RouteConfig';
 
-const app = express();
-const port = 3000;
+class ExpressApp {
+    app: express.Application;
+    port: number;
+    routes: Array<RouteConfig> = [];
 
-app.get('/', (req, res) => {
-    res.send('Hello world!');
-});
+    constructor() {
+        this.port = 3000;
+        this.init();
+    }
 
-app.listen(port, () => {
-    console.log(`server started at http://localhost:${port}`);
-});
+    init() {
+        this.initializeExpress();
+        this.basicSecurityMeasures();
+        this.configureRoutes();
+    }
+
+    basicSecurityMeasures() {
+        this.app.use(helmet());
+    }
+
+    configureRoutes() {
+        for (const controller in controllers) {
+            this.routes.push(new controllers[controller](this.app));
+        }
+    }
+
+    initializeExpress() {
+        this.app = express();
+    }
+
+    start() {
+        this.app.listen(this.port, () => {
+            this.routes.forEach((route) => {
+                console.log(`Route configured for ${route.getName()}`);
+            });
+            console.log(`Server started at http://localhost:${this.port}`);
+        });
+    }
+}
+
+const app: ExpressApp = new ExpressApp();
+app.start();
