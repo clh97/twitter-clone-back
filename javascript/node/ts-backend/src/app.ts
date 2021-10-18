@@ -1,5 +1,6 @@
 import express from 'express';
 import helmet from 'helmet';
+import logging from './logging';
 import controllers from './controllers';
 import RouteConfig from './controllers/RouteConfig';
 
@@ -7,6 +8,7 @@ class ExpressApp {
     app: express.Application;
     port: number;
     routes: Array<RouteConfig> = [];
+    logger: express.Handler;
 
     constructor() {
         this.port = 3000;
@@ -15,12 +17,20 @@ class ExpressApp {
 
     init() {
         this.initializeExpress();
-        this.basicSecurityMeasures();
+        this.configureLogging();
+        this.middlewares();
         this.configureRoutes();
     }
 
-    basicSecurityMeasures() {
+    initializeExpress() {
+        this.app = express();
+    }
+
+    middlewares() {
         this.app.use(helmet());
+        this.app.use(express.json());
+        this.app.use(express.urlencoded());
+        this.app.use(this.logger);
     }
 
     configureRoutes() {
@@ -29,8 +39,8 @@ class ExpressApp {
         }
     }
 
-    initializeExpress() {
-        this.app = express();
+    configureLogging() {
+        this.logger = logging.createLogger();
     }
 
     start() {
