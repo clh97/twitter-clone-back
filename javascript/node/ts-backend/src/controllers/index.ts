@@ -1,4 +1,5 @@
 import HomeController from './home';
 import DashboardController from './dashboard';
+import AuthenticationController from './authentication';
 
-export default [HomeController, DashboardController];
+export default [AuthenticationController, HomeController, DashboardController];

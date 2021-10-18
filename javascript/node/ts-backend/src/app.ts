@@ -46,7 +46,7 @@ class ExpressApp {
     start() {
         this.app.listen(this.port, () => {
             this.routes.forEach((route) => {
-                console.log(`Route configured for ${route.getName()}`);
+                console.log(`Route configured for ${route.getName()} -> /${route.getPrefix()}`);
             });
             console.log(`Server started at http://localhost:${this.port}`);
         });
