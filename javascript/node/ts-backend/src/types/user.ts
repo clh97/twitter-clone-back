@@ -11,7 +11,7 @@ type UserCreateInput = {
     username: string;
     password: string;
     email: string;
-    birthdate: Date;
+    birthdate: string;
 };
 
 type UserUpdateInput = {
@@ -21,6 +21,7 @@ type UserUpdateInput = {
 };
 
 type PublicUser = {
+    id?: number;
     username?: string;
     email?: string;
     birthdate?: Date;

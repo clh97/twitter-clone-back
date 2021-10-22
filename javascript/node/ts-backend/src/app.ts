@@ -1,29 +1,40 @@
+import 'reflect-metadata';
 import express from 'express';
 import helmet from 'helmet';
+
+import initializeDatabase from './database';
 import logging from './logging';
 import controllers from './controllers';
 import RouteConfig from './controllers/RouteConfig';
+import { Connection } from 'typeorm';
 
 class ExpressApp {
     app: express.Application;
     port: number;
     routes: Array<RouteConfig> = [];
     logger: express.Handler;
+    database: Connection;
 
     constructor() {
         this.port = 3000;
         this.init();
     }
 
-    init() {
+    async init() {
         this.initializeExpress();
         this.configureLogging();
         this.middlewares();
+        await this.initializeDatabase();
         this.configureRoutes();
     }
 
     initializeExpress() {
         this.app = express();
+    }
+
+    async initializeDatabase() {
+        const database = await initializeDatabase();
+        this.app.set('db', database);
     }
 
     middlewares() {

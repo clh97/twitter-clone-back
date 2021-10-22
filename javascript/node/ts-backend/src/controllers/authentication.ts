@@ -1,26 +1,27 @@
 import express from 'express';
 import * as uuid from 'uuid';
 import RouteConfig from './RouteConfig';
+import AuthenticationService from '../services/authentication';
 import { PublicUser, UserCreateInput, UserUpdateInput } from '../types/user';
 
 class AuthenticationController extends RouteConfig {
     prefix = 'authentication';
+    authenticationService: AuthenticationService;
 
     constructor(app: express.Application) {
         super(app, 'AuthenticationController');
+        this.authenticationService = new AuthenticationService(this.app);
         this.configureRoutes();
     }
 
     configureRoutes() {
         // create user
-        this.app.post(`/${this.prefix}`, (req, res) => {
+        this.app.post(`/${this.prefix}`, async (req, res) => {
             const requestData = req.body;
             try {
                 const user: UserCreateInput = { ...requestData };
-                const userId = this.createUser(user);
-                res.status(201).send({
-                    userId,
-                });
+                const createdUser: PublicUser = await this.createUser(user);
+                res.status(201).send({ createdUser });
             } catch (err) {
                 res.status(500).send({
                     error: err.message,
@@ -29,7 +30,7 @@ class AuthenticationController extends RouteConfig {
         });
 
         // read user by id
-        this.app.get(`/${this.prefix}/:id`, (req, res) => {
+        this.app.get(`/${this.prefix}/:id`, async (req, res) => {
             try {
                 const id = parseInt(req.query.id as string);
                 const user = this.readUser(id);
@@ -44,7 +45,7 @@ class AuthenticationController extends RouteConfig {
         });
 
         // update user by id
-        this.app.patch(`/${this.prefix}/:id`, (req, res) => {
+        this.app.patch(`/${this.prefix}/:id`, async (req, res) => {
             try {
                 const id = parseInt(req.query.id as string);
                 const requestData = req.body;
@@ -61,7 +62,7 @@ class AuthenticationController extends RouteConfig {
         });
 
         // delete user by id
-        this.app.delete(`/${this.prefix}/:id`, (req, res) => {
+        this.app.delete(`/${this.prefix}/:id`, async (req, res) => {
             try {
                 const id = parseInt(req.query.id as string);
                 const deletedUser = this.deleteUser(id);
@@ -78,12 +79,16 @@ class AuthenticationController extends RouteConfig {
         return this.app;
     }
 
-    createUser(user: UserCreateInput): number {
-        console.log(user);
-        return 1;
+    async createUser(user: UserCreateInput): Promise<PublicUser> {
+        try {
+            const createdUser: PublicUser = await this.authenticationService.createUser(user);
+            return createdUser;
+        } catch (err) {
+            throw err;
+        }
     }
 
-    readUser(id: number): PublicUser {
+    async readUser(id: number): Promise<PublicUser> {
         return {
             username: 'a',
             email: 'a',
@@ -92,7 +97,7 @@ class AuthenticationController extends RouteConfig {
         };
     }
 
-    updateUser(id: number, user: UserUpdateInput): PublicUser {
+    async updateUser(id: number, user: UserUpdateInput): Promise<PublicUser> {
         return {
             username: 'b',
             email: 'b',
@@ -101,7 +106,7 @@ class AuthenticationController extends RouteConfig {
         };
     }
 
-    deleteUser(id: number): boolean {
+    async deleteUser(id: number): Promise<boolean> {
         return false;
     }
 }

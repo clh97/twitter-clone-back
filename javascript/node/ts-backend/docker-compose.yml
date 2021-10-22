@@ -14,8 +14,12 @@ services:
 
     db:
         image: postgres
+        ports:
+            - 5432:5432
         environment:
             POSTGRES_PASSWORD: 123456
+        volumes:
+            - ./db_init:/docker-entrypoint-initdb.d/
 
     adminer:
         image: adminer
