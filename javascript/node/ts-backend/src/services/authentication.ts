@@ -1,10 +1,11 @@
 import express from 'express';
 import { DatabaseError } from 'pg-protocol';
 import { formatBirthdate } from '../utils/common';
-import { Repository, TypeORMError } from 'typeorm';
+import { EntityNotFoundError, QueryFailedError, Repository, TypeORMError } from 'typeorm';
 import { UserEntity } from '../entity/user';
-import { User, PublicUser, UserCreateInput } from '../types/user';
-import { databaseErrorHandler } from '../errors/database';
+import { User, PublicUser, UserCreateInput, UserUpdateInput } from '../types/user';
+import { databaseErrorHandler, DatabaseErrorMessage, generateDatabaseError } from '../errors/database';
+import HttpStatusCode from '../types/http-status';
 
 class AuthenticationService {
     app: express.Application;
@@ -23,7 +24,7 @@ class AuthenticationService {
             });
             return createdUser;
         } catch (err) {
-            if (err instanceof TypeORMError || err instanceof DatabaseError) {
+            if (err instanceof TypeORMError || err instanceof DatabaseError || err instanceof QueryFailedError) {
                 const httpError = databaseErrorHandler(err as DatabaseError);
                 throw httpError;
             }
@@ -31,9 +32,43 @@ class AuthenticationService {
         }
     }
 
-    // readUser(): User | PublicUser {}
+    async readUser(id: number): Promise<PublicUser> {
+        try {
+            const foundUser: PublicUser = await this.userRepository.findOneOrFail({ id });
+            return foundUser;
+        } catch (err) {
+            if (err instanceof EntityNotFoundError) {
+                const httpError = generateDatabaseError({
+                    error: err,
+                    message: DatabaseErrorMessage.ENTITY_NOT_FOUND,
+                    httpCode: HttpStatusCode.NOT_FOUND,
+                });
+                throw httpError;
+            }
 
-    // updateUser(): User | PublicUser {}
+            if (err instanceof TypeORMError || err instanceof DatabaseError || err instanceof QueryFailedError) {
+                const httpError = databaseErrorHandler(err as DatabaseError);
+                throw httpError;
+            }
+            throw err;
+        }
+    }
+
+    async updateUser(id: number, user: UserUpdateInput): Promise<PublicUser> {
+        try {
+            const updatedUser: PublicUser = (await this.userRepository.update(
+                { id },
+                { ...user, birthdate: formatBirthdate(user.birthdate) },
+            )) as PublicUser;
+            return updatedUser;
+        } catch (err) {
+            if (err instanceof TypeORMError || err instanceof DatabaseError || err instanceof QueryFailedError) {
+                const httpError = databaseErrorHandler(err as DatabaseError);
+                throw httpError;
+            }
+            throw err;
+        }
+    }
 
     // deleteUser(): boolean {}
 }

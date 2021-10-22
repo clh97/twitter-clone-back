@@ -1,5 +1,4 @@
 import express from 'express';
-import * as uuid from 'uuid';
 import RouteConfig from './RouteConfig';
 import AuthenticationService from '../services/authentication';
 import { PublicUser, UserCreateInput, UserUpdateInput } from '../types/user';
@@ -23,7 +22,7 @@ class AuthenticationController extends RouteConfig {
                 const createdUser: PublicUser = await this.createUser(user);
                 res.status(201).send({ createdUser });
             } catch (err) {
-                res.status(500).send({
+                res.status(err.httpCode).send({
                     error: err.message,
                 });
             }
@@ -32,13 +31,13 @@ class AuthenticationController extends RouteConfig {
         // read user by id
         this.app.get(`/${this.prefix}/:id`, async (req, res) => {
             try {
-                const id = parseInt(req.query.id as string);
-                const user = this.readUser(id);
-                res.status(201).send({
+                const id = parseInt(req.params.id as string);
+                const user: PublicUser = await this.readUser(id);
+                res.status(200).send({
                     user,
                 });
             } catch (err) {
-                res.status(500).send({
+                res.status(err.httpCode).send({
                     error: err.message,
                 });
             }
@@ -47,16 +46,18 @@ class AuthenticationController extends RouteConfig {
         // update user by id
         this.app.patch(`/${this.prefix}/:id`, async (req, res) => {
             try {
-                const id = parseInt(req.query.id as string);
+                const id = parseInt(req.params.id as string);
                 const requestData = req.body;
                 const user: UserUpdateInput = { ...requestData };
-                const updatedUser = this.updateUser(id, user);
+                const updatedUser = await this.updateUser(id, user);
                 res.status(200).send({
                     updatedUser,
                 });
             } catch (err) {
-                res.status(500).send({
+                console.log('error at controller', err);
+                res.status(err.httpCode).send({
                     error: err.message,
+                    detail: err.detail,
                 });
             }
         });
@@ -70,7 +71,7 @@ class AuthenticationController extends RouteConfig {
                     deletedUser,
                 });
             } catch (err) {
-                res.status(500).send({
+                res.status(err.statusCode).send({
                     error: err.message,
                 });
             }
@@ -89,21 +90,21 @@ class AuthenticationController extends RouteConfig {
     }
 
     async readUser(id: number): Promise<PublicUser> {
-        return {
-            username: 'a',
-            email: 'a',
-            birthdate: new Date(),
-            uuid: uuid.v4(),
-        };
+        try {
+            const foundUser: PublicUser = await this.authenticationService.readUser(id);
+            return foundUser;
+        } catch (err) {
+            throw err;
+        }
     }
 
     async updateUser(id: number, user: UserUpdateInput): Promise<PublicUser> {
-        return {
-            username: 'b',
-            email: 'b',
-            birthdate: new Date(),
-            uuid: uuid.v4(),
-        };
+        try {
+            const updatedUser: PublicUser = await this.authenticationService.updateUser(id, user);
+            return updatedUser;
+        } catch (err) {
+            throw err;
+        }
     }
 
     async deleteUser(id: number): Promise<boolean> {

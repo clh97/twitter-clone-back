@@ -1,6 +1,6 @@
 import moment from 'moment';
 
-/* dd/mm/yyyy -> Date */
+/* DD/MM/yyyy -> Date */
 export const formatBirthdate = (birthdate: string) => {
-    return moment(birthdate, 'dd/mm/yyyy').toDate();
+    return moment(birthdate, 'DD/MM/YYYY').toDate();
 };
