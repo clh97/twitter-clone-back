@@ -4,7 +4,7 @@ Typescript + express + postgresql + typeorm template
 
 # TODO
 
--   [ ] postgres + typeorm integration
+-   [x] postgres + typeorm integration
 -   [ ] authentication and hashing using argon2
 -   [ ] input sanitization with express-validator
 -   [ ] model validation (typeorm)
