@@ -28,4 +28,14 @@ type PublicUser = {
     uuid?: string;
 };
 
-export { User, PublicUser, UserCreateInput, UserUpdateInput };
+type UserLoginInput = {
+    username: string;
+    password: string;
+}
+
+type UserLoginOutput = {
+    token: string;
+    expiresAt: string;
+}
+
+export { User, PublicUser, UserCreateInput, UserUpdateInput, UserLoginInput, UserLoginOutput };

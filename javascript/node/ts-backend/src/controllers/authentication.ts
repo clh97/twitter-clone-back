@@ -1,7 +1,8 @@
 import express from 'express';
 import RouteConfig from './RouteConfig';
 import AuthenticationService from '../services/authentication';
-import { PublicUser, UserCreateInput, UserUpdateInput } from '../types/user';
+import { PublicUser, User, UserCreateInput, UserLoginInput, UserLoginOutput, UserUpdateInput } from '../types/user';
+import { authenticatedRequest } from '../utils/jwt';
 
 class AuthenticationController extends RouteConfig {
     prefix = 'authentication';
@@ -15,7 +16,7 @@ class AuthenticationController extends RouteConfig {
 
     configureRoutes() {
         // create user
-        this.app.post(`/${this.prefix}`, async (req, res) => {
+        this.app.post(`/${this.prefix}`, authenticatedRequest, async (req, res) => {
             const requestData = req.body;
             try {
                 const user: UserCreateInput = { ...requestData };
@@ -77,6 +78,20 @@ class AuthenticationController extends RouteConfig {
             }
         });
 
+        // create user
+        this.app.post(`/${this.prefix}/login`, async (req, res) => {
+            const requestData = req.body;
+            try {
+                const user: UserLoginInput = { ...requestData };
+                const result: UserLoginOutput = await this.login(user);
+                res.status(200).send({ result });
+            } catch (err) {
+                res.status(err.httpCode).send({
+                    error: err.message,
+                });
+            }
+        });
+
         return this.app;
     }
 
@@ -109,6 +124,15 @@ class AuthenticationController extends RouteConfig {
 
     async deleteUser(id: number): Promise<boolean> {
         return false;
+    }
+
+    async login(user: UserLoginInput): Promise<UserLoginOutput> {
+        try {
+            const result = await this.authenticationService.authenticateUser(user);
+            return result;
+        } catch (err) {
+            throw err;
+        }
     }
 }
 

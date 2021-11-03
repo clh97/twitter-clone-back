@@ -11,5 +11,5 @@ export default async () =>
         database: 'tsbackend',
         entities: [UserEntity],
         synchronize: true,
-        logging: true,
+        // logging: true,
     });

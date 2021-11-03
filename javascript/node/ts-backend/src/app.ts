@@ -1,3 +1,6 @@
+require('./global');
+require('dotenv').config();
+
 import 'reflect-metadata';
 import express from 'express';
 import helmet from 'helmet';
@@ -7,6 +10,7 @@ import logging from './logging';
 import controllers from './controllers';
 import RouteConfig from './controllers/RouteConfig';
 import { Connection } from 'typeorm';
+import { decodeTokenMiddleware } from './utils/jwt';
 
 class ExpressApp {
     app: express.Application;
@@ -42,6 +46,7 @@ class ExpressApp {
         this.app.use(express.json());
         this.app.use(express.urlencoded());
         this.app.use(this.logger);
+        this.app.use(decodeTokenMiddleware);
     }
 
     configureRoutes() {
