@@ -17,7 +17,6 @@ class ExpressApp {
     port: number;
     routes: Array<RouteConfig> = [];
     logger: express.Handler;
-    database: Connection;
 
     constructor() {
         this.port = 3000;
@@ -69,5 +68,4 @@ class ExpressApp {
     }
 }
 
-const app: ExpressApp = new ExpressApp();
-app.start();
+export default ExpressApp;
