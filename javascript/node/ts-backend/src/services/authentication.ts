@@ -7,11 +7,12 @@ import { formatBirthdate } from '../utils/common';
 import { EntityNotFoundError, QueryFailedError, Repository, TypeORMError } from 'typeorm';
 import { UserEntity } from '../entity/user';
 import { User, PublicUser, UserCreateInput, UserUpdateInput, UserLoginInput, UserLoginOutput } from '../types/user';
-import { databaseErrorHandler, DatabaseErrorMessage, generateDatabaseError } from '../errors/database';
+import { databaseErrorHandler, DatabaseErrorMessage } from '../errors/database';
 import HttpStatusCode from '../types/http-status';
 import HttpError from '../errors/http-error';
 import { AuthenticationErrorMessage } from '../errors/authentication';
 import moment from 'moment';
+import generateHttpError from '..//errors';
 
 class AuthenticationService {
     app: express.Application;
@@ -48,7 +49,7 @@ class AuthenticationService {
             return foundUser;
         } catch (err) {
             if (err instanceof EntityNotFoundError) {
-                const httpError = generateDatabaseError({
+                const httpError = generateHttpError({
                     error: err,
                     message: DatabaseErrorMessage.ENTITY_NOT_FOUND,
                     httpCode: HttpStatusCode.NOT_FOUND,

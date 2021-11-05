@@ -1,4 +1,5 @@
 import { DatabaseError } from 'pg-protocol';
+import generateError from '.';
 import HttpStatusCode from '../types/http-status';
 import HttpError from './http-error';
 
@@ -10,14 +11,10 @@ enum DatabaseErrorMessage {
     UNKNOWN_ERROR = 'Unknown error',
 }
 
-const generateDatabaseError = (httpError: HttpError): HttpError => {
-    return httpError;
-};
-
 const databaseErrorHandler = (error: DatabaseError): HttpError => {
     switch (error.code) {
         case PG_UNIQUE_CONSTRAINT_VIOLATION:
-            return generateDatabaseError({
+            return generateError({
                 error,
                 message: DatabaseErrorMessage.ENTITY_ALREADY_EXISTS,
                 detail: error.detail,
@@ -25,7 +22,7 @@ const databaseErrorHandler = (error: DatabaseError): HttpError => {
             });
 
         default:
-            return generateDatabaseError({
+            return generateError({
                 error,
                 message: DatabaseErrorMessage.UNKNOWN_ERROR,
                 httpCode: HttpStatusCode.INTERNAL_SERVER_ERROR,
@@ -33,4 +30,4 @@ const databaseErrorHandler = (error: DatabaseError): HttpError => {
     }
 };
 
-export { databaseErrorHandler, generateDatabaseError, DatabaseErrorMessage };
+export { databaseErrorHandler, DatabaseErrorMessage };
