@@ -15,12 +15,10 @@ import moment from 'moment';
 import generateHttpError from '..//errors';
 
 class AuthenticationService {
-    app: express.Application;
     userRepository: Repository<UserEntity>;
 
     constructor(app: express.Application) {
-        this.app = app;
-        this.userRepository = this.app.get('db').getRepository(UserEntity);
+        this.userRepository = app.get('db').getRepository(UserEntity);
     }
 
     async createUser(user: UserCreateInput): Promise<PublicUser> {
