@@ -9,7 +9,6 @@ import initializeDatabase from './database';
 import logging from './logging';
 import controllers from './controllers';
 import RouteConfig from './controllers/RouteConfig';
-import { Connection } from 'typeorm';
 import { decodeTokenMiddleware } from './utils/jwt';
 
 class ExpressApp {
