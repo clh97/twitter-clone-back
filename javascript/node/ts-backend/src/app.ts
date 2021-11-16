@@ -9,7 +9,9 @@ import initializeDatabase from './database';
 import logging from './logging';
 import controllers from './controllers';
 import RouteConfig from './controllers/RouteConfig';
+
 import { decodeTokenMiddleware } from './utils/jwt';
+import { validationError } from './utils/classValidator';
 
 class ExpressApp {
     app: express.Application;
@@ -25,9 +27,10 @@ class ExpressApp {
     async init() {
         this.initializeExpress();
         this.configureLogging();
-        this.middlewares();
         await this.initializeDatabase();
+        this.expressMiddlewares();
         this.configureRoutes();
+        this.middlewares();
     }
 
     initializeExpress() {
@@ -39,16 +42,19 @@ class ExpressApp {
             if (process.env.NODE_ENV !== 'test') {
                 const database = await initializeDatabase();
                 this.app.set('db', database);
-            }   
+            }
         } catch (err) {
             console.error('initializeDatabase:', err);
         }
     }
 
-    middlewares() {
+    expressMiddlewares() {
         this.app.use(helmet());
         this.app.use(express.json());
-        this.app.use(express.urlencoded());
+    }
+
+    middlewares() {
+        this.app.use(validationError);
         this.app.use(this.logger);
         this.app.use(decodeTokenMiddleware);
     }

@@ -3,6 +3,7 @@ import RouteConfig from './RouteConfig';
 import AuthenticationService from '../services/authentication';
 import { PublicUser, User, UserCreateInput, UserLoginInput, UserLoginOutput, UserUpdateInput } from '../types/user';
 import { authenticatedRequest } from '../utils/jwt';
+import { classValidatorMiddleware } from '../utils/classValidator';
 
 class AuthenticationController extends RouteConfig {
     prefix = 'authentication';
@@ -16,7 +17,7 @@ class AuthenticationController extends RouteConfig {
 
     configureRoutes() {
         // create user
-        this.app.post(`/${this.prefix}`, async (req, res) => {
+        this.app.post(`/${this.prefix}`, classValidatorMiddleware(UserCreateInput), async (req, res) => {
             const requestData = req.body;
             try {
                 const user: UserCreateInput = { ...requestData };
@@ -78,7 +79,7 @@ class AuthenticationController extends RouteConfig {
             }
         });
 
-        // create user
+        // login user
         this.app.post(`/${this.prefix}/login`, async (req, res) => {
             const requestData = req.body;
             try {

@@ -6,19 +6,19 @@ export class UserEntity implements User {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({ unique: true })
+    @Column({ unique: true, nullable: false })
     username: string;
 
-    @Column()
+    @Column({ nullable: false })
     password: string;
 
-    @Column({ unique: true })
+    @Column({ unique: true, nullable: false })
     email: string;
 
     @Column()
-    birthdate: Date;
+    birthdate: string;
 
-    @Column()
+    @Column({ nullable: false })
     @Generated('uuid')
     uuid: string;
 }
