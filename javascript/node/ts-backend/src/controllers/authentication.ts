@@ -16,7 +16,7 @@ class AuthenticationController extends RouteConfig {
 
     configureRoutes() {
         // create user
-        this.app.post(`/${this.prefix}`, authenticatedRequest, async (req, res) => {
+        this.app.post(`/${this.prefix}`, async (req, res) => {
             const requestData = req.body;
             try {
                 const user: UserCreateInput = { ...requestData };
