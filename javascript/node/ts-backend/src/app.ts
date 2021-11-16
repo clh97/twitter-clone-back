@@ -35,8 +35,14 @@ class ExpressApp {
     }
 
     async initializeDatabase() {
-        const database = await initializeDatabase();
-        this.app.set('db', database);
+        try {
+            if (process.env.NODE_ENV !== 'test') {
+                const database = await initializeDatabase();
+                this.app.set('db', database);
+            }   
+        } catch (err) {
+            console.error('initializeDatabase:', err);
+        }
     }
 
     middlewares() {
