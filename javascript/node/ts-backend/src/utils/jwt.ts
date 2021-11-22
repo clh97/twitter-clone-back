@@ -1,10 +1,10 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
-import HttpStatusCode from "../types/http-status";
-import HttpError from "../errors/http-error";
+import HttpStatusCode from '../types/http-status';
+import HttpError from '../errors/http-error';
 
 function authenticatedRequest(req: Request, res: Response, next: NextFunction): void {
-    if(!req.authenticated) {
+    if (!req.authenticated) {
         res.status(HttpStatusCode.UNAUTHORIZED).send();
         return;
     }
@@ -13,7 +13,8 @@ function authenticatedRequest(req: Request, res: Response, next: NextFunction): 
 
 function decodeTokenMiddleware(req: Request, res: Response, next: NextFunction): void {
     try {
-        const token = String(req.headers["x-access-token"]);
+        const token = String(req.headers['x-access-token']);
+        console.log(token);
         const decodedToken = jwt.decode(token);
 
         if (!decodedToken) {

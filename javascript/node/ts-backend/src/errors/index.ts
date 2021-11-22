@@ -1,4 +1,4 @@
-import HttpError from "./http-error";
+import HttpError from './http-error';
 
 const generateHttpError = (httpError: HttpError): HttpError => {
     return httpError;

@@ -15,4 +15,4 @@ export const validateDecorators = async (input: any): Promise<boolean> => {
         console.log('Caught promise rejection (validation failed). Errors: ', errors);
         return false;
     }
-}
+};

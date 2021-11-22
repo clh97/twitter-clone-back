@@ -1,5 +1,6 @@
 require('./global');
-require('dotenv').config();
+import dotenv from 'dotenv';
+dotenv.config();
 
 import 'reflect-metadata';
 import express from 'express';
@@ -29,8 +30,8 @@ class ExpressApp {
         this.configureLogging();
         await this.initializeDatabase();
         this.expressMiddlewares();
-        this.configureRoutes();
         this.middlewares();
+        this.configureRoutes();
     }
 
     initializeExpress() {

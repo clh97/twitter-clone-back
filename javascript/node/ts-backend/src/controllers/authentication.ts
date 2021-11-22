@@ -1,8 +1,7 @@
 import express from 'express';
 import RouteConfig from './RouteConfig';
 import AuthenticationService from '../services/authentication';
-import { PublicUser, User, UserCreateInput, UserLoginInput, UserLoginOutput, UserUpdateInput } from '../types/user';
-import { authenticatedRequest } from '../utils/jwt';
+import { PublicUser, UserCreateInput, UserLoginInput, UserLoginOutput, UserUpdateInput } from '../types/user';
 import { classValidatorMiddleware } from '../utils/classValidator';
 
 class AuthenticationController extends RouteConfig {

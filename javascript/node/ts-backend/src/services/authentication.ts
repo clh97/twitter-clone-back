@@ -86,7 +86,7 @@ class AuthenticationService {
             error: new Error(AuthenticationErrorMessage.USER_NOT_FOUND),
             httpCode: HttpStatusCode.NOT_FOUND,
             message: AuthenticationErrorMessage.USER_NOT_FOUND,
-        }
+        };
 
         try {
             const found = await this.userRepository.findOne({ username: user.username });
@@ -102,14 +102,14 @@ class AuthenticationService {
 
             const token = jwt.sign({ id: found.id }, process.env.JWT_SECRET, {
                 expiresIn,
-            })
+            });
 
             return {
                 token,
                 expiresAt: moment().add(expiresIn, 'milliseconds').toISOString(),
-            }
+            };
         } catch (err) {
-            console.log(err)
+            console.log(err);
             throw err;
         }
     }
