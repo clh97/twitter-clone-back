@@ -1,5 +1,4 @@
-import { IsDateString, IsEmail, IsNotEmpty, Length, Matches } from 'class-validator';
-import { isRegExp } from 'util/types';
+import { IsEmail, IsNotEmpty, Length, Matches } from 'class-validator';
 
 type User = {
     id?: number;
@@ -8,6 +7,8 @@ type User = {
     email?: string;
     birthdate?: string;
     uuid?: string;
+    createdAt?: Date;
+    updatedAt?: Date;
 };
 
 class UserCreateInput implements User {
