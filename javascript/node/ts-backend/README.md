@@ -13,3 +13,7 @@ Typescript + express + postgresql + typeorm template
 -   [ ] totp 2fa authentication
 -   [ ] auth0 or OAuth
 -   [ ] understand express-winston logger - how to use the winston instance in the application? through express?
+
+# TWITTER
+
+-   [] tweet as reply to another tweet
