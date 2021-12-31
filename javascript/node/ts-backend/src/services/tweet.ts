@@ -10,9 +10,9 @@ class TweetService {
         this.tweetRepository = app.get('db').getRepository(TweetEntity);
     }
 
-    async createTweet(tweet: TweetCreateInput): Promise<Tweet> {
+    async createTweet(tweet: TweetCreateInput, userId: number): Promise<Tweet> {
         try {
-            const createdTweet = this.tweetRepository.save(tweet);
+            const createdTweet = await this.tweetRepository.save({ ...tweet, createdBy: userId });
             return createdTweet;
         } catch (err) {
             throw err;

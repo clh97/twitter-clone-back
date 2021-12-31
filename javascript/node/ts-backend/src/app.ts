@@ -1,8 +1,9 @@
+import 'reflect-metadata';
+
 require('./global');
 import dotenv from 'dotenv';
 dotenv.config();
 
-import 'reflect-metadata';
 import express from 'express';
 import helmet from 'helmet';
 

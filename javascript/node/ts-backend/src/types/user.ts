@@ -7,6 +7,7 @@ type User = {
     email?: string;
     birthdate?: string;
     uuid?: string;
+    tweets?: number[];
     createdAt?: Date;
     updatedAt?: Date;
 };
