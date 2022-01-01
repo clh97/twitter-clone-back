@@ -3,7 +3,7 @@ import RouteConfig from './RouteConfig';
 import TweetService from '../services/tweet';
 import HttpStatusCode from '../types/http-status';
 import { classValidatorMiddleware } from '../utils/classValidator';
-import { Tweet, TweetCreateInput } from '../types/tweet';
+import { GetUserTweetsQuery, Tweet, TweetCreateInput } from '../types/tweet';
 import { authenticatedRequest } from '../utils/jwt';
 import { JwtPayload } from 'jsonwebtoken';
 
@@ -24,14 +24,28 @@ class TweetController extends RouteConfig {
             [classValidatorMiddleware(TweetCreateInput), authenticatedRequest],
             async (req: express.Request, res: express.Response) => {
                 try {
-                    if (!req.authenticated) {
-                        throw new Error('Unauthenticated');
-                    }
-
                     const jwtPayload: JwtPayload = req.decodedToken as JwtPayload;
                     const requestData: TweetCreateInput = req.body;
-                    const tweet: Tweet = await this.createTweet(requestData, jwtPayload.id);
+                    const userId: number = jwtPayload.id;
+                    const tweet: Tweet = await this.createTweet(requestData, userId);
                     res.status(HttpStatusCode.CREATED).send(tweet);
+                } catch (err) {
+                    throw err;
+                }
+            },
+        );
+
+        // get all logged in user tweets
+        this.app.get(
+            `/${this.prefix}/user`,
+            [authenticatedRequest],
+            async (req: express.Request, res: express.Response) => {
+                try {
+                    const { page = 1, limit = 5 } = req.query as unknown as GetUserTweetsQuery;
+                    const jwtPayload: JwtPayload = req.decodedToken as JwtPayload;
+                    const userId: number = jwtPayload.id;
+                    const tweets: Tweet[] = await this.paginateUserTweets(userId, page, limit);
+                    res.status(HttpStatusCode.OK).send(tweets);
                 } catch (err) {
                     throw err;
                 }
@@ -45,6 +59,15 @@ class TweetController extends RouteConfig {
         try {
             const createdTweet: Tweet = await this.tweetService.createTweet(tweet, userId);
             return createdTweet;
+        } catch (err) {
+            throw err;
+        }
+    }
+
+    async paginateUserTweets(userId: number, page: number, limit: number): Promise<Tweet[]> {
+        try {
+            const tweets: Tweet[] = await this.tweetService.getUserTweets(userId, page, limit);
+            return tweets;
         } catch (err) {
             throw err;
         }

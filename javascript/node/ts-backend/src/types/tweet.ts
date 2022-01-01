@@ -1,6 +1,11 @@
 import { IsNotEmpty, MaxLength, MinLength } from 'class-validator';
 import { User } from './user';
 
+interface GetUserTweetsQuery {
+    page: number;
+    limit: number;
+}
+
 type Tweet = {
     id?: number;
     uuid?: string;
@@ -16,4 +21,4 @@ class TweetCreateInput implements Tweet {
     content: string;
 }
 
-export { Tweet, TweetCreateInput };
+export { Tweet, TweetCreateInput, GetUserTweetsQuery };

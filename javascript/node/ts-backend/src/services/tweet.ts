@@ -18,6 +18,21 @@ class TweetService {
             throw err;
         }
     }
+
+    async getUserTweets(userId: number, page: number, limit: number): Promise<Tweet[]> {
+        try {
+            const startIndex: number = (page - 1) * limit;
+            const [tweetList] = await this.tweetRepository.findAndCount({
+                order: { createdAt: 'DESC' },
+                where: { createdBy: userId },
+                skip: startIndex,
+                take: limit,
+            });
+            return tweetList;
+        } catch (err) {
+            throw err;
+        }
+    }
 }
 
 export default TweetService;
