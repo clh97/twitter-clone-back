@@ -1,5 +1,4 @@
 import { IsNotEmpty, MaxLength, MinLength } from 'class-validator';
-import { User } from './user';
 
 interface GetUserTweetsQuery {
     page: number;
