@@ -6,6 +6,7 @@ import { classValidatorMiddleware } from '../utils/classValidator';
 import { GetUserTweetsQuery, Tweet, TweetCreateInput } from '../types/tweet';
 import { authenticatedRequest } from '../utils/jwt';
 import { JwtPayload } from 'jsonwebtoken';
+import { TweetErrors } from '../errors/tweet';
 
 class TweetController extends RouteConfig {
     prefix = 'tweet';
@@ -47,6 +48,12 @@ class TweetController extends RouteConfig {
                     const tweets: Tweet[] = await this.paginateUserTweets(userId, page, limit);
                     res.status(HttpStatusCode.OK).send(tweets);
                 } catch (err) {
+                    const errorMessage = { error: err.message };
+                    if (err instanceof TweetErrors.PaginationError) {
+                        res.status(HttpStatusCode.BAD_REQUEST).send(errorMessage);
+                        throw err;
+                    }
+                    res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).send(errorMessage);
                     throw err;
                 }
             },
@@ -65,6 +72,10 @@ class TweetController extends RouteConfig {
     }
 
     async paginateUserTweets(userId: number, page: number, limit: number): Promise<Tweet[]> {
+        if (page < 0 || limit < 0) {
+            throw new TweetErrors.PaginationError();
+        }
+
         try {
             const tweets: Tweet[] = await this.tweetService.getUserTweets(userId, page, limit);
             return tweets;
