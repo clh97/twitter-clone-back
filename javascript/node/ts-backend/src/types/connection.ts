@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsPositive } from 'class-validator';
 
 type Connection = {
     id?: number;
@@ -11,11 +11,8 @@ type Connection = {
 class ConnectionInput {
     @IsNumber()
     @IsNotEmpty()
-    from: number;
-
-    @IsNumber()
-    @IsNotEmpty()
-    to: number;
+    @IsPositive()
+    userId: number;
 }
 
 export { Connection, ConnectionInput };

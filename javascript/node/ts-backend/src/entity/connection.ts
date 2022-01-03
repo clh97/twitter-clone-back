@@ -1,14 +1,5 @@
 import { Connection } from '../types/connection';
-import {
-    Entity,
-    PrimaryGeneratedColumn,
-    Column,
-    Generated,
-    CreateDateColumn,
-    UpdateDateColumn,
-    ManyToOne,
-    JoinColumn,
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, Generated, CreateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
 import { UserEntity } from './user';
 
 @Entity()
@@ -25,6 +16,7 @@ export class ConnectionEntity implements Connection {
     from: number;
 
     @Column({ nullable: false })
+    @ManyToOne(() => UserEntity, (user) => user.id)
     @JoinColumn({ name: 'user_entity', referencedColumnName: 'id' })
     to: number;
 

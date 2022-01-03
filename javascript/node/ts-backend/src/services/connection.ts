@@ -1,7 +1,10 @@
 import express from 'express';
-import { Repository } from 'typeorm';
+import { QueryFailedError, Repository, TypeORMError } from 'typeorm';
+import { DatabaseError } from 'pg-protocol';
 import { ConnectionEntity } from '../entity/connection';
 import { Connection, ConnectionInput } from '../types/connection';
+import { ConnectionErrors } from '../errors/connection';
+import { databaseErrorHandler } from '../errors/database';
 
 class ConnectionService {
     connectionRepository: Repository<ConnectionEntity>;
@@ -10,10 +13,47 @@ class ConnectionService {
         this.connectionRepository = app.get('db').getRepository(ConnectionEntity);
     }
 
-    async createConnection(connection: ConnectionInput, userId: number): Promise<Connection> {
+    async follow(connection: ConnectionInput, userId: number): Promise<Connection> {
         try {
-            const createdConnection = await this.connectionRepository.save({ ...connection, createdBy: userId });
-            return createdConnection;
+            const alreadyFollowing = await this.connectionRepository.findOne({
+                where: {
+                    from: userId,
+                    to: connection.userId,
+                },
+            });
+
+            if (alreadyFollowing) {
+                throw new ConnectionErrors.AlreadyFollowingError();
+            }
+
+            const followed = await this.connectionRepository.save({
+                from: userId,
+                to: connection.userId,
+                createdBy: userId,
+            });
+            return followed;
+        } catch (err) {
+            if (err instanceof TypeORMError || err instanceof DatabaseError || err instanceof QueryFailedError) {
+                const httpError = databaseErrorHandler(err as DatabaseError);
+                throw httpError;
+            }
+            throw err;
+        }
+    }
+
+    async unfollow(connection: ConnectionInput, userId: number): Promise<Connection> {
+        try {
+            const unfollowed = await this.connectionRepository.delete({
+                from: userId,
+                to: connection.userId,
+                createdBy: userId,
+            });
+
+            if (unfollowed.affected != 1) {
+                throw new ConnectionErrors.NotAffectedError();
+            }
+
+            return null;
         } catch (err) {
             throw err;
         }

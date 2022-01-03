@@ -1,5 +1,6 @@
 enum TweetErrorMessage {
     PAGINATION_PARAMS_NEGATIVE = 'Page and limit must be both positive integers',
+    ALREADY_FOLLOWING = 'Already following user',
 }
 
 class PaginationError extends Error {
@@ -10,7 +11,7 @@ class PaginationError extends Error {
 }
 
 const TweetErrors = {
-    PaginationError: PaginationError,
+    PaginationError,
 };
 
 export { TweetErrorMessage, TweetErrors };
