@@ -43,6 +43,18 @@ class ConnectionService {
 
     async unfollow(connection: ConnectionInput, userId: number): Promise<Connection> {
         try {
+            const followingUser = await this.connectionRepository.findOne({
+                where: {
+                    from: userId,
+                    to: connection.userId,
+                    createdBy: userId,
+                },
+            });
+
+            if (!followingUser) {
+                throw new ConnectionErrors.NotFollowingError();
+            }
+
             const unfollowed = await this.connectionRepository.delete({
                 from: userId,
                 to: connection.userId,

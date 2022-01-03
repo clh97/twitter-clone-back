@@ -1,6 +1,6 @@
 enum ConnectionErrorMessage {
     ALREADY_FOLLOWING = 'Already following user',
-    NOT_FOLLOWING = 'User is not followed',
+    NOT_FOLLOWING = 'User is not being followed',
     NOT_AFFECTED = 'Unable to unfollow user',
 }
 
@@ -12,7 +12,7 @@ class AlreadyFollowingError extends Error {
 }
 
 class NotFollowingError extends Error {
-    constructor(msg: string = ConnectionErrorMessage.ALREADY_FOLLOWING) {
+    constructor(msg: string = ConnectionErrorMessage.NOT_FOLLOWING) {
         super(msg);
         Object.setPrototypeOf(this, NotFollowingError.prototype);
     }
