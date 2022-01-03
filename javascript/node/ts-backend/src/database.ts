@@ -1,6 +1,7 @@
 import { createConnection } from 'typeorm';
 import { UserEntity } from './entity/user';
 import { TweetEntity } from './entity/tweet';
+import { ConnectionEntity } from './entity/connection';
 
 export default async () =>
     createConnection({
@@ -10,7 +11,7 @@ export default async () =>
         username: 'tsbackenduser',
         password: '123456',
         database: 'tsbackend',
-        entities: [UserEntity, TweetEntity],
+        entities: [UserEntity, TweetEntity, ConnectionEntity],
         synchronize: true,
         logging: true,
     });
