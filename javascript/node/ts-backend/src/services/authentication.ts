@@ -1,18 +1,15 @@
 import express from 'express';
-import { DatabaseError } from 'pg-protocol';
 import argon2 from 'argon2';
 import parseDuration from 'parse-duration';
 import jwt from 'jsonwebtoken';
 import { formatBirthdate } from '../utils/common';
-import { EntityNotFoundError, QueryFailedError, Repository, TypeORMError } from 'typeorm';
+import { Repository } from 'typeorm';
 import { UserEntity } from '../entity/user';
 import { User, PublicUser, UserCreateInput, UserUpdateInput, UserLoginInput, UserLoginOutput } from '../types/user';
-import { databaseErrorHandler, DatabaseErrorMessage } from '../errors/database';
 import HttpStatusCode from '../types/http-status';
 import HttpError from '../errors/http-error';
 import { AuthenticationErrorMessage } from '../errors/authentication';
 import moment from 'moment';
-import generateHttpError from '..//errors';
 
 class AuthenticationService {
     userRepository: Repository<UserEntity>;
@@ -33,10 +30,6 @@ class AuthenticationService {
             delete createdUser.password;
             return createdUser as PublicUser;
         } catch (err) {
-            if (err instanceof TypeORMError || err instanceof DatabaseError || err instanceof QueryFailedError) {
-                const httpError = databaseErrorHandler(err as DatabaseError);
-                throw httpError;
-            }
             throw err;
         }
     }
@@ -46,19 +39,6 @@ class AuthenticationService {
             const foundUser: PublicUser = await this.userRepository.findOneOrFail({ id });
             return foundUser;
         } catch (err) {
-            if (err instanceof EntityNotFoundError) {
-                const httpError = generateHttpError({
-                    error: err,
-                    message: DatabaseErrorMessage.ENTITY_NOT_FOUND,
-                    httpCode: HttpStatusCode.NOT_FOUND,
-                });
-                throw httpError;
-            }
-
-            if (err instanceof TypeORMError || err instanceof DatabaseError || err instanceof QueryFailedError) {
-                const httpError = databaseErrorHandler(err as DatabaseError);
-                throw httpError;
-            }
             throw err;
         }
     }
@@ -71,10 +51,6 @@ class AuthenticationService {
             )) as PublicUser;
             return updatedUser;
         } catch (err) {
-            if (err instanceof TypeORMError || err instanceof DatabaseError || err instanceof QueryFailedError) {
-                const httpError = databaseErrorHandler(err as DatabaseError);
-                throw httpError;
-            }
             throw err;
         }
     }
@@ -109,7 +85,6 @@ class AuthenticationService {
                 expiresAt: moment().add(expiresIn, 'milliseconds').toISOString(),
             };
         } catch (err) {
-            console.log(err);
             throw err;
         }
     }

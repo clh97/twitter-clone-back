@@ -7,6 +7,8 @@ import { GetUserTweetsQuery, Tweet, TweetCreateInput } from '../types/tweet';
 import { authenticatedRequest } from '../utils/jwt';
 import { JwtPayload } from 'jsonwebtoken';
 import { TweetErrors } from '../errors/tweet';
+import { QueryFailedError } from 'typeorm';
+import { PostgresError, handlePostgresError } from '../errors/typeorm';
 
 class TweetController extends RouteConfig {
     prefix = 'tweet';
@@ -31,6 +33,13 @@ class TweetController extends RouteConfig {
                     const tweet: Tweet = await this.createTweet(requestData, userId);
                     res.status(HttpStatusCode.CREATED).send(tweet);
                 } catch (err) {
+                    const errorMessage = { error: err.message };
+
+                    if (err instanceof QueryFailedError) {
+                        const error: PostgresError = handlePostgresError(err);
+                        res.status(error.statusCode).send(errorMessage);
+                        throw error;
+                    }
                     throw err;
                 }
             },
@@ -49,10 +58,18 @@ class TweetController extends RouteConfig {
                     res.status(HttpStatusCode.OK).send(tweets);
                 } catch (err) {
                     const errorMessage = { error: err.message };
+
+                    if (err instanceof QueryFailedError) {
+                        const error: PostgresError = handlePostgresError(err);
+                        res.status(error.statusCode).send(errorMessage);
+                        throw error;
+                    }
+
                     if (err instanceof TweetErrors.PaginationError) {
                         res.status(HttpStatusCode.BAD_REQUEST).send(errorMessage);
                         throw err;
                     }
+
                     res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).send(errorMessage);
                     throw err;
                 }

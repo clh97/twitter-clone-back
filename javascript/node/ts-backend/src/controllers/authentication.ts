@@ -1,8 +1,11 @@
 import express from 'express';
+import { QueryFailedError } from 'typeorm';
 import RouteConfig from './RouteConfig';
+import HttpStatusCode from '../types/http-status';
 import AuthenticationService from '../services/authentication';
 import { PublicUser, UserCreateInput, UserLoginInput, UserLoginOutput, UserUpdateInput } from '../types/user';
 import { classValidatorMiddleware } from '../utils/classValidator';
+import { PostgresError, handlePostgresError } from '../errors/typeorm';
 
 class AuthenticationController extends RouteConfig {
     prefix = 'authentication';
@@ -23,9 +26,14 @@ class AuthenticationController extends RouteConfig {
                 const createdUser: PublicUser = await this.createUser(user);
                 res.status(201).send({ createdUser });
             } catch (err) {
-                res.status(err.httpCode).send({
-                    error: err.message,
-                });
+                const errorMessage = { error: err.message };
+                if (err instanceof QueryFailedError) {
+                    const error: PostgresError = handlePostgresError(err);
+                    res.status(error.statusCode).send(errorMessage);
+                    throw error;
+                }
+                res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).send(errorMessage);
+                throw err;
             }
         });
 
@@ -38,9 +46,14 @@ class AuthenticationController extends RouteConfig {
                     user,
                 });
             } catch (err) {
-                res.status(err.httpCode).send({
-                    error: err.message,
-                });
+                const errorMessage = { error: err.message };
+                if (err instanceof QueryFailedError) {
+                    const error: PostgresError = handlePostgresError(err);
+                    res.status(error.statusCode).send(errorMessage);
+                    throw error;
+                }
+                res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).send(errorMessage);
+                throw err;
             }
         });
 
@@ -55,11 +68,14 @@ class AuthenticationController extends RouteConfig {
                     updatedUser,
                 });
             } catch (err) {
-                console.log('error at controller', err);
-                res.status(err.httpCode).send({
-                    error: err.message,
-                    detail: err.detail,
-                });
+                const errorMessage = { error: err.message };
+                if (err instanceof QueryFailedError) {
+                    const error: PostgresError = handlePostgresError(err);
+                    res.status(error.statusCode).send(errorMessage);
+                    throw error;
+                }
+                res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).send(errorMessage);
+                throw err;
             }
         });
 
@@ -72,9 +88,14 @@ class AuthenticationController extends RouteConfig {
                     deletedUser,
                 });
             } catch (err) {
-                res.status(err.statusCode).send({
-                    error: err.message,
-                });
+                const errorMessage = { error: err.message };
+                if (err instanceof QueryFailedError) {
+                    const error: PostgresError = handlePostgresError(err);
+                    res.status(error.statusCode).send(errorMessage);
+                    throw error;
+                }
+                res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).send(errorMessage);
+                throw err;
             }
         });
 
@@ -86,9 +107,14 @@ class AuthenticationController extends RouteConfig {
                 const result: UserLoginOutput = await this.login(user);
                 res.status(200).send({ result });
             } catch (err) {
-                res.status(err.httpCode).send({
-                    error: err.message,
-                });
+                const errorMessage = { error: err.message };
+                if (err instanceof QueryFailedError) {
+                    const error: PostgresError = handlePostgresError(err);
+                    res.status(error.statusCode).send(errorMessage);
+                    throw error;
+                }
+                res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).send(errorMessage);
+                throw err;
             }
         });
 

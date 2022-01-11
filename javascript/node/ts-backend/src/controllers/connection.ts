@@ -7,6 +7,8 @@ import { Connection, ConnectionInput } from '../types/connection';
 import { authenticatedRequest } from '../utils/jwt';
 import { JwtPayload } from 'jsonwebtoken';
 import { ConnectionErrors } from '../errors/connection';
+import { QueryFailedError } from 'typeorm';
+import { PostgresError, handlePostgresError } from '../errors/typeorm';
 
 class ConnectionController extends RouteConfig {
     prefix = 'connection';
@@ -32,6 +34,13 @@ class ConnectionController extends RouteConfig {
                     res.status(HttpStatusCode.OK).send(connection);
                 } catch (err) {
                     const errorMessage = { error: err.message };
+
+                    if (err instanceof QueryFailedError) {
+                        const error: PostgresError = handlePostgresError(err);
+                        res.status(error.statusCode).send(errorMessage);
+                        throw error;
+                    }
+
                     if (err instanceof ConnectionErrors.AlreadyFollowingError) {
                         res.status(HttpStatusCode.CONFLICT).send(errorMessage);
                         throw err;
@@ -55,6 +64,13 @@ class ConnectionController extends RouteConfig {
                     res.status(HttpStatusCode.OK).send(connection);
                 } catch (err) {
                     const errorMessage = { error: err.message };
+
+                    if (err instanceof QueryFailedError) {
+                        const error: PostgresError = handlePostgresError(err);
+                        res.status(error.statusCode).send(errorMessage);
+                        throw error;
+                    }
+
                     if (err instanceof ConnectionErrors.NotFollowingError) {
                         res.status(HttpStatusCode.CONFLICT).send(errorMessage);
                         throw err;

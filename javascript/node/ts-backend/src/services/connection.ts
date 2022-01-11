@@ -1,10 +1,8 @@
 import express from 'express';
-import { QueryFailedError, Repository, TypeORMError } from 'typeorm';
-import { DatabaseError } from 'pg-protocol';
+import { Repository } from 'typeorm';
 import { ConnectionEntity } from '../entity/connection';
 import { Connection, ConnectionInput } from '../types/connection';
 import { ConnectionErrors } from '../errors/connection';
-import { databaseErrorHandler } from '../errors/database';
 
 class ConnectionService {
     connectionRepository: Repository<ConnectionEntity>;
@@ -33,10 +31,6 @@ class ConnectionService {
             });
             return followed;
         } catch (err) {
-            if (err instanceof TypeORMError || err instanceof DatabaseError || err instanceof QueryFailedError) {
-                const httpError = databaseErrorHandler(err as DatabaseError);
-                throw httpError;
-            }
             throw err;
         }
     }
