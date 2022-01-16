@@ -18,5 +18,6 @@ Typescript + express + postgresql + typeorm template
 
 -   [x] tweet as reply to another tweet
 -   [x] remove index pagination - use cursor instead
+-   [x] timeline for user
 -   [ ] tweet: likes, retweets, images, link previews
 -   [ ] profile: image, background, title, bio
