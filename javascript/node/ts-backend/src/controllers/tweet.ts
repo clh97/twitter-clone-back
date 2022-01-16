@@ -51,10 +51,10 @@ class TweetController extends RouteConfig {
             [authenticatedRequest],
             async (req: express.Request, res: express.Response) => {
                 try {
-                    const { page = 1, limit = 5 } = req.query as unknown as GetUserTweetsQuery;
+                    const { cursor, limit = 10 } = req.query as unknown as GetUserTweetsQuery;
                     const jwtPayload: JwtPayload = req.decodedToken as JwtPayload;
                     const userId: number = jwtPayload.id;
-                    const tweets: Tweet[] = await this.paginateUserTweets(userId, page, limit);
+                    const tweets: Tweet[] = await this.paginateUserTweets(userId, limit, cursor);
                     res.status(HttpStatusCode.OK).send(tweets);
                 } catch (err) {
                     const errorMessage = { error: err.message };
@@ -108,13 +108,9 @@ class TweetController extends RouteConfig {
         }
     }
 
-    async paginateUserTweets(userId: number, page: number, limit: number): Promise<Tweet[]> {
-        if (page < 0 || limit < 0) {
-            throw new TweetErrors.PaginationError();
-        }
-
+    async paginateUserTweets(userId: number, limit: number, cursor: number): Promise<Tweet[]> {
         try {
-            const tweets: Tweet[] = await this.tweetService.getUserTweets(userId, page, limit);
+            const tweets: Tweet[] = await this.tweetService.getUserTweets(userId, limit, cursor);
             return tweets;
         } catch (err) {
             throw err;

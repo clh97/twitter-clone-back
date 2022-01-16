@@ -1,7 +1,7 @@
 import { IsNotEmpty, MaxLength, MinLength } from 'class-validator';
 
 interface GetUserTweetsQuery {
-    page: number;
+    cursor: number;
     limit: number;
 }
 

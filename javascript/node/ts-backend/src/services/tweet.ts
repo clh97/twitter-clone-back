@@ -1,5 +1,5 @@
 import express from 'express';
-import { Repository } from 'typeorm';
+import { LessThan, LessThanOrEqual, Repository } from 'typeorm';
 import { TweetEntity } from '../entity/tweet';
 import { Tweet, TweetCreateInput } from '../types/tweet';
 
@@ -19,13 +19,20 @@ class TweetService {
         }
     }
 
-    async getUserTweets(userId: number, page: number, limit: number): Promise<Tweet[]> {
+    async getUserTweets(userId: number, limit: number, cursor: number): Promise<Tweet[]> {
         try {
-            const startIndex: number = (page - 1) * limit;
+            if (!cursor) {
+                const [tweetList] = await this.tweetRepository.findAndCount({
+                    order: { createdAt: 'DESC' },
+                    where: { createdBy: userId },
+                    take: limit,
+                });
+                return tweetList;
+            }
+
             const [tweetList] = await this.tweetRepository.findAndCount({
                 order: { createdAt: 'DESC' },
-                where: { createdBy: userId },
-                skip: startIndex,
+                where: { createdBy: userId, id: LessThanOrEqual(cursor) },
                 take: limit,
             });
             return tweetList;
