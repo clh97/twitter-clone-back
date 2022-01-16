@@ -1,8 +1,8 @@
 import { User } from '../types/user';
-import { Entity, PrimaryGeneratedColumn, Column, Generated, CreateDateColumn, ManyToOne, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, Generated, CreateDateColumn, OneToMany } from 'typeorm';
 import { TweetEntity } from './tweet';
 
-@Entity()
+@Entity('user')
 export class UserEntity implements User {
     @PrimaryGeneratedColumn()
     id: number;
@@ -10,7 +10,7 @@ export class UserEntity implements User {
     @Column({ unique: true, nullable: false })
     username: string;
 
-    @Column({ nullable: false })
+    @Column({ nullable: false, select: false })
     password: string;
 
     @Column({ unique: true, nullable: false })
@@ -18,6 +18,9 @@ export class UserEntity implements User {
 
     @Column()
     birthdate: string;
+
+    @OneToMany(() => TweetEntity, (tweet) => tweet.owner)
+    tweets: TweetEntity[];
 
     @Column({ nullable: false })
     @Generated('uuid')

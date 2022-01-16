@@ -1,5 +1,5 @@
 import express from 'express';
-import { LessThan, LessThanOrEqual, Repository } from 'typeorm';
+import { LessThanOrEqual, Repository } from 'typeorm';
 import { TweetEntity } from '../entity/tweet';
 import { Tweet, TweetCreateInput } from '../types/tweet';
 
@@ -23,6 +23,7 @@ class TweetService {
         try {
             if (!cursor) {
                 const [tweetList] = await this.tweetRepository.findAndCount({
+                    relations: ['owner'],
                     order: { createdAt: 'DESC' },
                     where: { createdBy: userId },
                     take: limit,

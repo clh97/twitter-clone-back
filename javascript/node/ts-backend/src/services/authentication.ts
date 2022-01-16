@@ -36,7 +36,10 @@ class AuthenticationService {
 
     async readUser(id: number): Promise<PublicUser> {
         try {
-            const foundUser: PublicUser = await this.userRepository.findOneOrFail({ id });
+            const foundUser: PublicUser = await this.userRepository.findOneOrFail({
+                where: { id },
+                relations: ['tweets'],
+            });
             return foundUser;
         } catch (err) {
             throw err;
@@ -55,7 +58,14 @@ class AuthenticationService {
         }
     }
 
-    // deleteUser(): boolean {}
+    async deleteUser(id: number): Promise<boolean> {
+        try {
+            const deleted = await this.userRepository.delete({ id });
+            return deleted.affected > 0;
+        } catch (err) {
+            throw err;
+        }
+    }
 
     async authenticateUser(user: UserLoginInput): Promise<UserLoginOutput> {
         const invalidLoginError: HttpError = {
@@ -65,7 +75,10 @@ class AuthenticationService {
         };
 
         try {
-            const found = await this.userRepository.findOne({ username: user.username });
+            const found = await this.userRepository.findOne({
+                where: { username: user.username },
+                select: ['id', 'password'],
+            });
             if (!found) {
                 throw invalidLoginError;
             }

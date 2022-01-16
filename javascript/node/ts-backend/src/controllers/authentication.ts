@@ -6,6 +6,8 @@ import AuthenticationService from '../services/authentication';
 import { PublicUser, UserCreateInput, UserLoginInput, UserLoginOutput, UserUpdateInput } from '../types/user';
 import { classValidatorMiddleware } from '../utils/classValidator';
 import { PostgresError, handlePostgresError } from '../errors/typeorm';
+import { authenticatedRequest } from '../utils/jwt';
+import { JwtPayload } from 'jsonwebtoken';
 
 class AuthenticationController extends RouteConfig {
     prefix = 'authentication';
@@ -19,88 +21,105 @@ class AuthenticationController extends RouteConfig {
 
     configureRoutes() {
         // create user
-        this.app.post(`/${this.prefix}`, classValidatorMiddleware(UserCreateInput), async (req, res) => {
-            const requestData = req.body;
-            try {
-                const user: UserCreateInput = { ...requestData };
-                const createdUser: PublicUser = await this.createUser(user);
-                res.status(201).send({ createdUser });
-            } catch (err) {
-                const errorMessage = { error: err.message };
-                if (err instanceof QueryFailedError) {
-                    const error: PostgresError = handlePostgresError(err);
-                    res.status(error.statusCode).send(errorMessage);
-                    throw error;
+        this.app.post(
+            `/${this.prefix}`,
+            classValidatorMiddleware(UserCreateInput),
+            async (req: express.Request, res: express.Response) => {
+                const requestData = req.body;
+                try {
+                    const user: UserCreateInput = { ...requestData };
+                    const createdUser: PublicUser = await this.createUser(user);
+                    res.status(201).send({ createdUser });
+                } catch (err) {
+                    const errorMessage = { error: err.message };
+                    if (err instanceof QueryFailedError) {
+                        const error: PostgresError = handlePostgresError(err);
+                        res.status(error.statusCode).send(errorMessage);
+                        throw error;
+                    }
+                    res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).send(errorMessage);
+                    throw err;
                 }
-                res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).send(errorMessage);
-                throw err;
-            }
-        });
+            },
+        );
 
         // read user by id
-        this.app.get(`/${this.prefix}/:id`, async (req, res) => {
-            try {
-                const id = parseInt(req.params.id as string);
-                const user: PublicUser = await this.readUser(id);
-                res.status(200).send({
-                    user,
-                });
-            } catch (err) {
-                const errorMessage = { error: err.message };
-                if (err instanceof QueryFailedError) {
-                    const error: PostgresError = handlePostgresError(err);
-                    res.status(error.statusCode).send(errorMessage);
-                    throw error;
+        this.app.get(
+            `/${this.prefix}/:id`,
+            [authenticatedRequest],
+            async (req: express.Request, res: express.Response) => {
+                try {
+                    const id = parseInt(req.params.id as string);
+                    const user: PublicUser = await this.readUser(id);
+                    res.status(200).send({
+                        user,
+                    });
+                } catch (err) {
+                    const errorMessage = { error: err.message };
+                    if (err instanceof QueryFailedError) {
+                        const error: PostgresError = handlePostgresError(err);
+                        res.status(error.statusCode).send(errorMessage);
+                        throw error;
+                    }
+                    res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).send(errorMessage);
+                    throw err;
                 }
-                res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).send(errorMessage);
-                throw err;
-            }
-        });
+            },
+        );
 
         // update user by id
-        this.app.patch(`/${this.prefix}/:id`, async (req, res) => {
-            try {
-                const id = parseInt(req.params.id as string);
-                const requestData = req.body;
-                const user: UserUpdateInput = { ...requestData };
-                const updatedUser = await this.updateUser(id, user);
-                res.status(200).send({
-                    updatedUser,
-                });
-            } catch (err) {
-                const errorMessage = { error: err.message };
-                if (err instanceof QueryFailedError) {
-                    const error: PostgresError = handlePostgresError(err);
-                    res.status(error.statusCode).send(errorMessage);
-                    throw error;
+        this.app.patch(
+            `/${this.prefix}/:id`,
+            [authenticatedRequest],
+            async (req: express.Request, res: express.Response) => {
+                try {
+                    const id = parseInt(req.params.id as string);
+                    const requestData = req.body;
+                    const user: UserUpdateInput = { ...requestData };
+                    const updatedUser = await this.updateUser(id, user);
+                    res.status(200).send({
+                        updatedUser,
+                    });
+                } catch (err) {
+                    const errorMessage = { error: err.message };
+                    if (err instanceof QueryFailedError) {
+                        const error: PostgresError = handlePostgresError(err);
+                        res.status(error.statusCode).send(errorMessage);
+                        throw error;
+                    }
+                    res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).send(errorMessage);
+                    throw err;
                 }
-                res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).send(errorMessage);
-                throw err;
-            }
-        });
+            },
+        );
 
         // delete user by id
-        this.app.delete(`/${this.prefix}/:id`, async (req, res) => {
-            try {
-                const id = parseInt(req.query.id as string);
-                const deletedUser = this.deleteUser(id);
-                res.status(200).send({
-                    deletedUser,
-                });
-            } catch (err) {
-                const errorMessage = { error: err.message };
-                if (err instanceof QueryFailedError) {
-                    const error: PostgresError = handlePostgresError(err);
-                    res.status(error.statusCode).send(errorMessage);
-                    throw error;
+        this.app.delete(
+            `/${this.prefix}`,
+            [authenticatedRequest],
+            async (req: express.Request, res: express.Response) => {
+                try {
+                    const jwtPayload: JwtPayload = req.decodedToken as JwtPayload;
+                    const userId: number = jwtPayload.id;
+                    const deletedUser = this.deleteUser(userId);
+                    res.status(200).send({
+                        deletedUser,
+                    });
+                } catch (err) {
+                    const errorMessage = { error: err.message };
+                    if (err instanceof QueryFailedError) {
+                        const error: PostgresError = handlePostgresError(err);
+                        res.status(error.statusCode).send(errorMessage);
+                        throw error;
+                    }
+                    res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).send(errorMessage);
+                    throw err;
                 }
-                res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).send(errorMessage);
-                throw err;
-            }
-        });
+            },
+        );
 
         // login user
-        this.app.post(`/${this.prefix}/login`, async (req, res) => {
+        this.app.post(`/${this.prefix}/login`, async (req: express.Request, res: express.Response) => {
             const requestData = req.body;
             try {
                 const user: UserLoginInput = { ...requestData };
@@ -149,7 +168,12 @@ class AuthenticationController extends RouteConfig {
     }
 
     async deleteUser(id: number): Promise<boolean> {
-        return false;
+        try {
+            const deleted = await this.authenticationService.deleteUser(id);
+            return deleted;
+        } catch (err) {
+            throw err;
+        }
     }
 
     async login(user: UserLoginInput): Promise<UserLoginOutput> {

@@ -1,4 +1,5 @@
 import { IsEmail, IsNotEmpty, Length, Matches } from 'class-validator';
+import { Tweet } from './tweet';
 
 type User = {
     id?: number;
@@ -7,7 +8,7 @@ type User = {
     email?: string;
     birthdate?: string;
     uuid?: string;
-    tweets?: number[];
+    tweets?: Tweet[];
     createdAt?: Date;
     updatedAt?: Date;
 };

@@ -11,7 +11,7 @@ import {
 } from 'typeorm';
 import { UserEntity } from './user';
 
-@Entity()
+@Entity('tweet')
 export class TweetEntity implements Tweet {
     @PrimaryGeneratedColumn()
     id: number;
@@ -30,12 +30,21 @@ export class TweetEntity implements Tweet {
 
     @Column({ nullable: false })
     @ManyToOne(() => UserEntity)
-    @JoinColumn({ name: 'user_owner_entity', referencedColumnName: 'id' })
+    @JoinColumn({ name: 'tweet_user_createdby_entity', referencedColumnName: 'id' })
     createdBy: number;
+
+    @ManyToOne(() => UserEntity, (user) => user.tweets)
+    @JoinColumn({ name: 'createdBy' })
+    owner: UserEntity;
 
     @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP(6)' })
     createdAt: Date;
 
-    @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP(6)', onUpdate: 'CURRENT_TIMESTAMP(6)' })
+    @UpdateDateColumn({
+        type: 'timestamp',
+        default: () => 'CURRENT_TIMESTAMP(6)',
+        onUpdate: 'CURRENT_TIMESTAMP(6)',
+        select: false,
+    })
     updatedAt: Date;
 }
