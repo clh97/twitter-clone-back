@@ -45,7 +45,7 @@ class TweetController extends RouteConfig {
             },
         );
 
-        // get all logged in user tweets
+        // get all tweets from user
         this.app.get(
             `/${this.prefix}/user`,
             [authenticatedRequest],
@@ -76,6 +76,26 @@ class TweetController extends RouteConfig {
             },
         );
 
+        // get all replies for a tweet
+        this.app.get(`/${this.prefix}/thread/:id`, async (req: express.Request, res: express.Response) => {
+            try {
+                const threadId = parseInt(req.params.id as string);
+                const tweets = await this.getTweetThread(threadId);
+                res.status(HttpStatusCode.OK).send(tweets);
+            } catch (err) {
+                const errorMessage = { error: err.message };
+
+                if (err instanceof QueryFailedError) {
+                    const error: PostgresError = handlePostgresError(err);
+                    res.status(error.statusCode).send(errorMessage);
+                    throw error;
+                }
+
+                res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).send(errorMessage);
+                throw err;
+            }
+        });
+
         return this.app;
     }
 
@@ -95,6 +115,15 @@ class TweetController extends RouteConfig {
 
         try {
             const tweets: Tweet[] = await this.tweetService.getUserTweets(userId, page, limit);
+            return tweets;
+        } catch (err) {
+            throw err;
+        }
+    }
+
+    async getTweetThread(tweetId: number): Promise<Tweet[]> {
+        try {
+            const tweets: Tweet[] = await this.tweetService.getTweetThread(tweetId);
             return tweets;
         } catch (err) {
             throw err;

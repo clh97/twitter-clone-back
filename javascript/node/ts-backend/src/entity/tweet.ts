@@ -23,9 +23,14 @@ export class TweetEntity implements Tweet {
     @Generated('uuid')
     uuid: string;
 
+    @Column({ nullable: true })
+    @ManyToOne(() => TweetEntity)
+    @JoinColumn({ name: 'tweet_reply_entity', referencedColumnName: 'id' })
+    replyTo?: number;
+
     @Column({ nullable: false })
     @ManyToOne(() => UserEntity)
-    @JoinColumn({ name: 'user_entity', referencedColumnName: 'id' })
+    @JoinColumn({ name: 'user_owner_entity', referencedColumnName: 'id' })
     createdBy: number;
 
     @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP(6)' })

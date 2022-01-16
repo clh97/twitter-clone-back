@@ -9,6 +9,7 @@ type Tweet = {
     id?: number;
     uuid?: string;
     content?: string;
+    replyTo?: number;
     createdBy?: number;
     createdAt?: Date;
 };

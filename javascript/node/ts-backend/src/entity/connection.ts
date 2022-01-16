@@ -12,17 +12,17 @@ export class ConnectionEntity implements Connection {
     uuid: string;
 
     @Column({ nullable: false })
-    @JoinColumn({ name: 'user_entity', referencedColumnName: 'id' })
+    @JoinColumn({ name: 'user_from_entity', referencedColumnName: 'id' })
     from: number;
 
     @Column({ nullable: false })
     @ManyToOne(() => UserEntity, (user) => user.id)
-    @JoinColumn({ name: 'user_entity', referencedColumnName: 'id' })
+    @JoinColumn({ name: 'user_to_entity', referencedColumnName: 'id' })
     to: number;
 
     @Column({ nullable: false })
     @ManyToOne(() => UserEntity)
-    @JoinColumn({ name: 'user_entity', referencedColumnName: 'id' })
+    @JoinColumn({ name: 'user_owner_entity', referencedColumnName: 'id' })
     createdBy: number;
 
     @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP(6)' })

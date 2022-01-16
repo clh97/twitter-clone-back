@@ -33,6 +33,18 @@ class TweetService {
             throw err;
         }
     }
+
+    async getTweetThread(tweetId: number): Promise<Tweet[]> {
+        try {
+            const tweetList: Tweet[] = await this.tweetRepository.find({
+                order: { createdAt: 'DESC' },
+                where: { replyTo: tweetId },
+            });
+            return tweetList;
+        } catch (err) {
+            throw err;
+        }
+    }
 }
 
 export default TweetService;
