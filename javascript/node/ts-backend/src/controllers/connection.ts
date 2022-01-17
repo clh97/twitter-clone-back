@@ -45,6 +45,12 @@ class ConnectionController extends RouteConfig {
                         res.status(HttpStatusCode.CONFLICT).send(errorMessage);
                         throw err;
                     }
+
+                    if (err instanceof ConnectionErrors.SelfFollowError) {
+                        res.status(HttpStatusCode.BAD_REQUEST).send(errorMessage);
+                        throw err;
+                    }
+
                     res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).send(errorMessage);
                     throw err;
                 }

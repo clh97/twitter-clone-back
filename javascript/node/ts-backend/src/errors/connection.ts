@@ -1,5 +1,6 @@
 enum ConnectionErrorMessage {
     ALREADY_FOLLOWING = 'Already following user',
+    SELF_CONNECTION = 'Unable to follow/unfollow yourself o_o',
     NOT_FOLLOWING = 'User is not being followed',
     NOT_AFFECTED = 'Unable to unfollow user',
 }
@@ -25,10 +26,18 @@ class NotAffectedError extends Error {
     }
 }
 
+class SelfConnectionError extends Error {
+    constructor(msg: string = ConnectionErrorMessage.SELF_CONNECTION) {
+        super(msg);
+        Object.setPrototypeOf(this, SelfConnectionError.prototype);
+    }
+}
+
 const ConnectionErrors = {
     AlreadyFollowingError,
     NotFollowingError,
     NotAffectedError,
+    SelfConnectionError,
 };
 
 export { ConnectionErrorMessage, ConnectionErrors };

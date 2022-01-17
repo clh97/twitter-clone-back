@@ -13,6 +13,10 @@ class ConnectionService {
 
     async follow(connection: ConnectionInput, userId: number): Promise<Connection> {
         try {
+            if (connection.userId == userId) {
+                throw new ConnectionErrors.SelfConnectionError();
+            }
+
             const alreadyFollowing = await this.connectionRepository.findOne({
                 where: {
                     from: userId,
@@ -37,6 +41,10 @@ class ConnectionService {
 
     async unfollow(connection: ConnectionInput, userId: number): Promise<Connection> {
         try {
+            if (connection.userId == userId) {
+                throw new ConnectionErrors.SelfConnectionError();
+            }
+
             const followingUser = await this.connectionRepository.findOne({
                 where: {
                     from: userId,
