@@ -29,7 +29,7 @@ class AuthenticationController extends RouteConfig {
                 try {
                     const user: UserCreateInput = { ...requestData };
                     const createdUser: PublicUser = await this.createUser(user);
-                    res.status(201).send({ createdUser });
+                    res.status(HttpStatusCode.CREATED).send({ createdUser });
                 } catch (err) {
                     const errorMessage = { error: err.message };
                     if (err instanceof QueryFailedError) {
@@ -51,7 +51,7 @@ class AuthenticationController extends RouteConfig {
                 try {
                     const id = parseInt(req.params.id as string);
                     const user: PublicUser = await this.readUser(id);
-                    res.status(200).send({
+                    res.status(HttpStatusCode.OK).send({
                         user,
                     });
                 } catch (err) {
@@ -77,7 +77,7 @@ class AuthenticationController extends RouteConfig {
                     const requestData = req.body;
                     const user: UserUpdateInput = { ...requestData };
                     const updatedUser = await this.updateUser(id, user);
-                    res.status(200).send({
+                    res.status(HttpStatusCode.OK).send({
                         updatedUser,
                     });
                 } catch (err) {
@@ -102,7 +102,7 @@ class AuthenticationController extends RouteConfig {
                     const jwtPayload: JwtPayload = req.decodedToken as JwtPayload;
                     const userId: number = jwtPayload.id;
                     const deletedUser = this.deleteUser(userId);
-                    res.status(200).send({
+                    res.status(HttpStatusCode.OK).send({
                         deletedUser,
                     });
                 } catch (err) {
@@ -124,7 +124,7 @@ class AuthenticationController extends RouteConfig {
             try {
                 const user: UserLoginInput = { ...requestData };
                 const result: UserLoginOutput = await this.login(user);
-                res.status(200).send({ result });
+                res.status(HttpStatusCode.OK).send({ result });
             } catch (err) {
                 const errorMessage = { error: err.message };
                 if (err instanceof QueryFailedError) {
