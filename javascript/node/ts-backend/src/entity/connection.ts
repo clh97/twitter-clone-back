@@ -12,6 +12,7 @@ export class ConnectionEntity implements Connection {
     uuid: string;
 
     @Column({ nullable: false })
+    @ManyToOne(() => UserEntity, (user) => user.id)
     @JoinColumn({ name: 'connection_user_from_entity', referencedColumnName: 'id' })
     from: number;
 

@@ -1,5 +1,5 @@
 import express from 'express';
-import { Repository } from 'typeorm';
+import { LessThanOrEqual, Repository } from 'typeorm';
 import { ConnectionEntity } from '../entity/connection';
 import { Connection, ConnectionInput } from '../types/connection';
 import { ConnectionErrors } from '../errors/connection';
@@ -73,16 +73,45 @@ class ConnectionService {
         }
     }
 
-    async getUserConnections(userId: number, page: number, limit: number): Promise<Connection[]> {
+    async getFollowing(userId: number, limit: number, cursor: number): Promise<Connection[]> {
         try {
-            const startIndex: number = (page - 1) * limit;
-            const [ConnectionList] = await this.connectionRepository.findAndCount({
-                order: { createdAt: 'DESC' },
-                where: { createdBy: userId },
-                skip: startIndex,
+            if (!cursor) {
+                const [followerList] = await this.connectionRepository.findAndCount({
+                    relations: ['to'],
+                    where: { from: userId },
+                    take: limit,
+                });
+                return followerList;
+            }
+
+            const [followerList] = await this.connectionRepository.findAndCount({
+                relations: ['to'],
+                where: { from: userId, id: LessThanOrEqual(cursor) },
                 take: limit,
             });
-            return ConnectionList;
+            return followerList;
+        } catch (err) {
+            throw err;
+        }
+    }
+
+    async getFollowers(userId: number, limit: number, cursor: number): Promise<Connection[]> {
+        try {
+            if (!cursor) {
+                const [followerList] = await this.connectionRepository.findAndCount({
+                    relations: ['from'],
+                    where: { to: userId },
+                    take: limit,
+                });
+                return followerList;
+            }
+
+            const [followerList] = await this.connectionRepository.findAndCount({
+                relations: ['from'],
+                where: { to: userId, id: LessThanOrEqual(cursor) },
+                take: limit,
+            });
+            return followerList;
         } catch (err) {
             throw err;
         }

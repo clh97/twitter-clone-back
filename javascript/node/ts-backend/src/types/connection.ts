@@ -1,5 +1,15 @@
 import { IsNotEmpty, IsNumber, IsPositive } from 'class-validator';
 
+interface GetFollowingQuery {
+    cursor: number;
+    limit: number;
+}
+
+interface GetFollowersQuery {
+    cursor: number;
+    limit: number;
+}
+
 type Connection = {
     id?: number;
     uuid?: string;
@@ -15,4 +25,4 @@ class ConnectionInput {
     userId: number;
 }
 
-export { Connection, ConnectionInput };
+export { Connection, ConnectionInput, GetFollowingQuery, GetFollowersQuery };
