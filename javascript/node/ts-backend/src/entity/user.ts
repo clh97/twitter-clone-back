@@ -1,5 +1,5 @@
 import { User } from '../types/user';
-import { Entity, PrimaryGeneratedColumn, Column, Generated, CreateDateColumn, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, Generated, CreateDateColumn, OneToMany, ManyToMany } from 'typeorm';
 import { TweetEntity } from './tweet';
 
 @Entity('user')
@@ -21,6 +21,9 @@ export class UserEntity implements User {
 
     @OneToMany(() => TweetEntity, (tweet) => tweet.owner)
     tweets: TweetEntity[];
+
+    @ManyToMany(() => TweetEntity, (tweet) => tweet.owner)
+    likes: TweetEntity[];
 
     @Column({ nullable: false })
     @Generated('uuid')

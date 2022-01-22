@@ -8,8 +8,11 @@ import {
     UpdateDateColumn,
     ManyToOne,
     JoinColumn,
+    ManyToMany,
+    JoinTable,
 } from 'typeorm';
 import { UserEntity } from './user';
+import { PublicUser } from '../types/user';
 
 @Entity('tweet')
 export class TweetEntity implements Tweet {
@@ -33,9 +36,22 @@ export class TweetEntity implements Tweet {
     @JoinColumn({ name: 'tweet_user_createdby_entity', referencedColumnName: 'id' })
     createdBy: number;
 
-    @ManyToOne(() => UserEntity, (user) => user.tweets)
+    @ManyToOne(() => UserEntity, (user) => user.tweets, { eager: true })
     @JoinColumn({ name: 'createdBy' })
     owner: UserEntity;
+
+    @ManyToMany(() => UserEntity, (user) => user.id, { cascade: true })
+    @JoinTable({
+        joinColumn: {
+            name: 'tweet',
+            referencedColumnName: 'id',
+        },
+        inverseJoinColumn: {
+            name: 'user',
+            referencedColumnName: 'id'
+        }
+    })
+    likedBy: PublicUser[];
 
     @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP(6)' })
     createdAt: Date;

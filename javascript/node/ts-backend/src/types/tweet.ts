@@ -12,6 +12,7 @@ type Tweet = {
     content?: string;
     replyTo?: number;
     owner?: PublicUser;
+    likedBy?: PublicUser[];
     createdBy?: number;
     createdAt?: Date;
 };

@@ -96,6 +96,30 @@ class TweetController extends RouteConfig {
             }
         });
 
+        // like tweet
+        this.app.get(
+            `/${this.prefix}/like/:id`,
+            [authenticatedRequest],
+            async (req: express.Request, res: express.Response) => {
+                try {
+                    const jwtPayload: JwtPayload = req.decodedToken as JwtPayload;
+                    const userId: number = jwtPayload.id;
+                    const tweetId = parseInt(req.params.id as string);
+                    const likedTweet = await this.likeTweet(userId, tweetId);
+                    res.status(HttpStatusCode.OK).send(likedTweet);
+                } catch (err) {
+                    const errorMessage = { error: err.message };
+
+                    if (err instanceof QueryFailedError) {
+                        const error: PostgresError = handlePostgresError(err);
+                        res.status(error.statusCode).send(errorMessage);
+                        throw error;
+                    }
+                    throw err;
+                }
+            },
+        );
+
         return this.app;
     }
 
@@ -121,6 +145,15 @@ class TweetController extends RouteConfig {
         try {
             const tweets: Tweet[] = await this.tweetService.getTweetThread(tweetId);
             return tweets;
+        } catch (err) {
+            throw err;
+        }
+    }
+
+    async likeTweet(userId: number, tweetId: number): Promise<Tweet> {
+        try {
+            const likedTweet: Tweet = await this.tweetService.likeTweet(userId, tweetId);
+            return likedTweet;
         } catch (err) {
             throw err;
         }
