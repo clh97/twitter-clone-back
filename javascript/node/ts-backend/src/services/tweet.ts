@@ -43,6 +43,15 @@ class TweetService {
         }
     }
 
+    async getTweetById(tweetId: number): Promise<Tweet> {
+        try {
+            const tweet: Tweet = await this.tweetRepository.findOne({ id: tweetId }, { relations: ['likedBy'] });
+            return tweet;
+        } catch (err) {
+            throw err;
+        }
+    }
+
     async getTweetThread(tweetId: number): Promise<Tweet[]> {
         try {
             const tweetList: Tweet[] = await this.tweetRepository.find({

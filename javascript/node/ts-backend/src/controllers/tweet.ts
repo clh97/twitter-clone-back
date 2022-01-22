@@ -45,6 +45,29 @@ class TweetController extends RouteConfig {
             },
         );
 
+        // get single tweet by id
+        this.app.get(
+            `/${this.prefix}/:id`,
+            async (req: express.Request, res: express.Response) => {
+                try {
+                    const tweetId = parseInt(req.params.id as string);
+                    const tweet: Tweet = await this.getTweetById(tweetId);
+                    res.status(HttpStatusCode.OK).send(tweet);
+                } catch (err) {
+                    const errorMessage = { error: err.message };
+
+                    if (err instanceof QueryFailedError) {
+                        const error: PostgresError = handlePostgresError(err);
+                        res.status(error.statusCode).send(errorMessage);
+                        throw error;
+                    }
+
+                    res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).send(errorMessage);
+                    throw err;
+                }
+            },
+        );
+
         // get all tweets from user
         this.app.get(
             `/${this.prefix}/user`,
@@ -127,6 +150,15 @@ class TweetController extends RouteConfig {
         try {
             const createdTweet: Tweet = await this.tweetService.createTweet(tweet, userId);
             return createdTweet;
+        } catch (err) {
+            throw err;
+        }
+    }
+
+    async getTweetById(tweetId: number): Promise<Tweet> {
+        try {
+            const tweet: Tweet = await this.tweetService.getTweetById(tweetId);
+            return tweet;
         } catch (err) {
             throw err;
         }

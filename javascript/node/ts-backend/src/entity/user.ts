@@ -13,10 +13,10 @@ export class UserEntity implements User {
     @Column({ nullable: false, select: false })
     password: string;
 
-    @Column({ unique: true, nullable: false })
+    @Column({ unique: true, nullable: false, select: false })
     email: string;
 
-    @Column()
+    @Column({ select: false })
     birthdate: string;
 
     @OneToMany(() => TweetEntity, (tweet) => tweet.owner)
