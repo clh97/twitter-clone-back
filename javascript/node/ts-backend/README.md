@@ -20,4 +20,4 @@ Typescript + express + postgresql + typeorm template
 -   [x] remove index pagination - use cursor instead
 -   [x] timeline for user
 -   [ ] tweet: retweets, images, link previews
--   [ ] profile: image, background, title, bio
+-   [x] profile: image, background, title, bio
