@@ -35,11 +35,18 @@ class TweetController extends RouteConfig {
                 } catch (err) {
                     const errorMessage = { error: err.message };
 
+                    if (err instanceof TweetErrors.SelfReplyError) {
+                        res.status(HttpStatusCode.BAD_REQUEST).send(errorMessage);
+                        throw err;
+                    }
+
                     if (err instanceof QueryFailedError) {
                         const error: PostgresError = handlePostgresError(err);
                         res.status(error.statusCode).send(errorMessage);
                         throw error;
                     }
+
+                    res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).send(errorMessage);
                     throw err;
                 }
             },

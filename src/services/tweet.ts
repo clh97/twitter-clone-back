@@ -1,4 +1,5 @@
 import express from 'express';
+import { TweetErrors } from '../errors/tweet';
 import { LessThanOrEqual, Repository } from 'typeorm';
 import { TweetEntity } from '../entity/tweet';
 import { Tweet, TweetCreateInput } from '../types/tweet';
@@ -13,7 +14,14 @@ class TweetService {
 
     async createTweet(tweet: TweetCreateInput, userId: number): Promise<Tweet> {
         try {
-            const createdTweet = await this.tweetRepository.save({ ...tweet, createdBy: userId });
+            const lastTweet = await this.tweetRepository.findOne({}, { order: { id: 'DESC' } });
+
+            if (tweet.replyTo == lastTweet.id) {
+                throw new TweetErrors.SelfReplyError();
+            }
+
+            const createdTweet: Tweet = await this.tweetRepository.save({ ...tweet, createdBy: userId });
+
             return createdTweet;
         } catch (err) {
             throw err;

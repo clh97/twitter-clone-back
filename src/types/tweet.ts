@@ -1,4 +1,4 @@
-import { IsNotEmpty, MaxLength, MinLength } from 'class-validator';
+import { IsNotEmpty, IsOptional, MaxLength, MinLength } from 'class-validator';
 import { PublicUser } from './user';
 
 interface GetUserTweetsQuery {
@@ -22,6 +22,9 @@ class TweetCreateInput implements Tweet {
     @MinLength(1)
     @MaxLength(140)
     content: string;
+
+    @IsOptional()
+    replyTo?: number;
 }
 
 export { Tweet, TweetCreateInput, GetUserTweetsQuery };
