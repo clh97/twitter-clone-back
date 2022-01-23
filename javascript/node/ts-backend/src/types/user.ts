@@ -1,4 +1,5 @@
 import { IsEmail, IsNotEmpty, IsOptional, Length, Matches } from 'class-validator';
+import { UserProfileEntity } from '../entity/user-profile';
 import { Tweet } from './tweet';
 
 type User = {
@@ -7,6 +8,7 @@ type User = {
     password: string;
     email?: string;
     birthdate?: string;
+    profile?: UserProfileEntity;
     uuid?: string;
     tweets?: Tweet[];
     createdAt?: Date;

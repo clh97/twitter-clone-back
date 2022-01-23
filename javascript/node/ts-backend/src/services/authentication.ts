@@ -10,22 +10,29 @@ import HttpStatusCode from '../types/http-status';
 import HttpError from '../errors/http-error';
 import { AuthenticationErrorMessage } from '../errors/authentication';
 import moment from 'moment';
+import { UserProfile } from '../types/user-profile';
+import { UserProfileEntity } from '../entity/user-profile';
 
 class AuthenticationService {
     userRepository: Repository<UserEntity>;
+    userProfileRepository: Repository<UserEntity>;
 
     constructor(app: express.Application) {
         this.userRepository = app.get('db').getRepository(UserEntity);
+        this.userProfileRepository = app.get('db').getRepository(UserProfileEntity);
     }
 
     async createUser(user: UserCreateInput): Promise<PublicUser> {
         try {
             const hashed = await argon2.hash(user.password);
-            const createdUser: User = await this.userRepository.save({
+            const profile = await this.userProfileRepository.save({});
+            const createdUser = await this.userRepository.save({
                 ...user,
                 password: hashed,
                 birthdate: formatBirthdate(user.birthdate),
+                profile,
             });
+
             delete createdUser.id;
             delete createdUser.password;
             return createdUser as PublicUser;

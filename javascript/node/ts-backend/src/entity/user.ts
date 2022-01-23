@@ -1,6 +1,7 @@
 import { User } from '../types/user';
-import { Entity, PrimaryGeneratedColumn, Column, Generated, CreateDateColumn, OneToMany, ManyToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, Generated, CreateDateColumn, OneToMany, ManyToMany, OneToOne, JoinColumn } from 'typeorm';
 import { TweetEntity } from './tweet';
+import { UserProfileEntity } from './user-profile'
 
 @Entity('user')
 export class UserEntity implements User {
@@ -18,6 +19,10 @@ export class UserEntity implements User {
 
     @Column({ select: false })
     birthdate: string;
+
+    @OneToOne(() => UserProfileEntity)
+    @JoinColumn({ name: 'profile_id', referencedColumnName: 'id' })
+    profile: UserProfileEntity;
 
     @OneToMany(() => TweetEntity, (tweet) => tweet.owner)
     tweets: TweetEntity[];

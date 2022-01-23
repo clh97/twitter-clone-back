@@ -9,6 +9,7 @@ abstract class RouteConfig {
         this.app = app;
         this.name = name;
         this.configureRoutes();
+        console.log(`configuring route -> ${this.name}`);
     }
 
     getName() {
@@ -18,6 +19,7 @@ abstract class RouteConfig {
     getPrefix() {
         return this.prefix;
     }
+
     abstract configureRoutes(): express.Application;
 }
 
