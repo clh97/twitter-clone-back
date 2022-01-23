@@ -1,15 +1,11 @@
-# TS-Backend
+# twitter-clone
 
-Typescript + express + postgresql + typeorm template
-
-# TODO
+Typescript + express + postgresql + typeorm twitter clone
 
 -   [x] postgres + typeorm integration
--   [ ] finish authentication/user endpoints
--   [ ] authentication and hashing using argon2
--   [ ] input sanitization with express-validator
--   [ ] model validation (typeorm)
--   [ ] service layer
+-   [x] finish authentication/user endpoints
+-   [x] authentication and hashing using argon2
+-   [x] input sanitization with express-validator | class-validator
 -   [ ] totp 2fa authentication
 -   [ ] auth0 or OAuth
 -   [ ] understand express-winston logger - how to use the winston instance in the application? through express?
