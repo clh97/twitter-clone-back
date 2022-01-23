@@ -37,8 +37,7 @@ class AuthenticationService {
     async readUser(id: number): Promise<PublicUser> {
         try {
             const foundUser: PublicUser = await this.userRepository.findOneOrFail({
-                where: { id },
-                relations: ['tweets'],
+                where: { id }
             });
             return foundUser;
         } catch (err) {
@@ -48,11 +47,17 @@ class AuthenticationService {
 
     async updateUser(id: number, user: UserUpdateInput): Promise<PublicUser> {
         try {
-            const updatedUser: PublicUser = (await this.userRepository.update(
-                { id },
-                { ...user, birthdate: formatBirthdate(user.birthdate) },
-            )) as PublicUser;
-            return updatedUser;
+            let userToUpdate = user;
+
+            if (user.birthdate) {
+                userToUpdate.birthdate = formatBirthdate(user.birthdate);
+            }
+
+            const updatedUser = await this.userRepository.save(
+                { id, ...userToUpdate, }
+            );
+
+            return updatedUser as PublicUser;
         } catch (err) {
             throw err;
         }
