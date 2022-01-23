@@ -69,14 +69,15 @@ class AuthenticationController extends RouteConfig {
 
         // update user by id
         this.app.patch(
-            `/${this.prefix}/:id`,
-            [authenticatedRequest],
+            `/${this.prefix}`,
+            [authenticatedRequest, classValidatorMiddleware(UserUpdateInput)],
             async (req: express.Request, res: express.Response) => {
                 try {
-                    const id = parseInt(req.params.id as string);
+                    const jwtPayload: JwtPayload = req.decodedToken as JwtPayload;
+                    const userId: number = jwtPayload.id;
                     const requestData = req.body;
                     const user: UserUpdateInput = { ...requestData };
-                    const updatedUser = await this.updateUser(id, user);
+                    const updatedUser = await this.updateUser(userId, user);
                     res.status(HttpStatusCode.OK).send({
                         updatedUser,
                     });
