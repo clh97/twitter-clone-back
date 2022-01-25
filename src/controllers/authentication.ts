@@ -8,6 +8,7 @@ import { classValidatorMiddleware } from '../utils/classValidator';
 import { PostgresError, handlePostgresError } from '../errors/typeorm';
 import { authenticatedRequest } from '../utils/jwt';
 import { JwtPayload } from 'jsonwebtoken';
+import { AuthenticationErrors } from '../errors/authentication';
 
 class AuthenticationController extends RouteConfig {
     prefix = 'authentication';
@@ -128,6 +129,11 @@ class AuthenticationController extends RouteConfig {
                 res.status(HttpStatusCode.OK).send({ result });
             } catch (err) {
                 const errorMessage = { error: err.message };
+                if (err instanceof AuthenticationErrors.AuthenticationError) {
+                    res.status(HttpStatusCode.UNAUTHORIZED).send(errorMessage);
+                    throw err;
+                }
+
                 if (err instanceof QueryFailedError) {
                     const error: PostgresError = handlePostgresError(err);
                     res.status(error.statusCode).send(errorMessage);

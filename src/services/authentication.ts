@@ -2,15 +2,13 @@ import express from 'express';
 import argon2 from 'argon2';
 import parseDuration from 'parse-duration';
 import jwt from 'jsonwebtoken';
-import { formatBirthdate } from '../utils/common';
-import { Repository } from 'typeorm';
-import { UserEntity } from '../entity/user';
-import { User, PublicUser, UserCreateInput, UserUpdateInput, UserLoginInput, UserLoginOutput } from '../types/user';
-import HttpStatusCode from '../types/http-status';
-import HttpError from '../errors/http-error';
-import { AuthenticationErrorMessage } from '../errors/authentication';
 import moment from 'moment';
-import { UserProfile } from '../types/user-profile';
+import { Repository } from 'typeorm';
+
+import { formatBirthdate } from '../utils/common';
+import { UserEntity } from '../entity/user';
+import { AuthenticationErrors } from '../errors/authentication';
+import { PublicUser, UserCreateInput, UserUpdateInput, UserLoginInput, UserLoginOutput } from '../types/user';
 import { UserProfileEntity } from '../entity/user-profile';
 
 class AuthenticationService {
@@ -44,7 +42,7 @@ class AuthenticationService {
     async readUser(id: number): Promise<PublicUser> {
         try {
             const foundUser: PublicUser = await this.userRepository.findOneOrFail({
-                where: { id }
+                where: { id },
             });
             return foundUser;
         } catch (err) {
@@ -54,15 +52,13 @@ class AuthenticationService {
 
     async updateUser(id: number, user: UserUpdateInput): Promise<PublicUser> {
         try {
-            let userToUpdate = user;
+            const userToUpdate = user;
 
             if (user.birthdate) {
                 userToUpdate.birthdate = formatBirthdate(user.birthdate);
             }
 
-            const updatedUser = await this.userRepository.save(
-                { id, ...userToUpdate, }
-            );
+            const updatedUser = await this.userRepository.save({ id, ...userToUpdate });
 
             return updatedUser as PublicUser;
         } catch (err) {
@@ -80,24 +76,18 @@ class AuthenticationService {
     }
 
     async authenticateUser(user: UserLoginInput): Promise<UserLoginOutput> {
-        const invalidLoginError: HttpError = {
-            error: new Error(AuthenticationErrorMessage.USER_NOT_FOUND),
-            httpCode: HttpStatusCode.NOT_FOUND,
-            message: AuthenticationErrorMessage.USER_NOT_FOUND,
-        };
-
         try {
             const found = await this.userRepository.findOne({
                 where: { username: user.username },
                 select: ['id', 'password'],
             });
             if (!found) {
-                throw invalidLoginError;
+                throw new AuthenticationErrors.AuthenticationError();
             }
             const isValid = await argon2.verify(String(found.password), String(user.password));
 
             if (!isValid) {
-                throw invalidLoginError;
+                throw new AuthenticationErrors.AuthenticationError();
             }
             const expiresIn: number = parseDuration(process.env.JWT_EXPIRATION_TIME);
 

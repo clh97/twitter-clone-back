@@ -6,6 +6,7 @@ dotenv.config();
 
 import express from 'express';
 import helmet from 'helmet';
+import cors from 'cors';
 
 import initializeDatabase from './database';
 import logging from './logging';
@@ -51,6 +52,9 @@ class ExpressApp {
     }
 
     expressMiddlewares() {
+        if (process.env.NODE_ENV != 'production') {
+            this.app.use(cors());
+        }
         this.app.use(helmet());
         this.app.use(express.json());
     }

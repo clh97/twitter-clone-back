@@ -3,4 +3,15 @@ enum AuthenticationErrorMessage {
     UNAUTHORIZED = 'Unauthorized',
 }
 
-export { AuthenticationErrorMessage };
+class AuthenticationError extends Error {
+    constructor(msg: string = AuthenticationErrorMessage.UNAUTHORIZED) {
+        super(msg);
+        Object.setPrototypeOf(this, AuthenticationError.prototype);
+    }
+}
+
+const AuthenticationErrors = {
+    AuthenticationError,
+};
+
+export { AuthenticationErrors, AuthenticationErrorMessage };
