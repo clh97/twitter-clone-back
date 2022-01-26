@@ -82,12 +82,12 @@ class AuthenticationService {
                 select: ['id', 'password'],
             });
             if (!found) {
-                throw new AuthenticationErrors.AuthenticationError();
+                throw new AuthenticationErrors.InvalidUsernameOrPasswordError();
             }
             const isValid = await argon2.verify(String(found.password), String(user.password));
 
             if (!isValid) {
-                throw new AuthenticationErrors.AuthenticationError();
+                throw new AuthenticationErrors.InvalidUsernameOrPasswordError();
             }
             const expiresIn: number = parseDuration(process.env.JWT_EXPIRATION_TIME);
 
