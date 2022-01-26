@@ -1,5 +1,7 @@
 import express from 'express';
 import { QueryFailedError } from 'typeorm';
+import { JwtPayload } from 'jsonwebtoken';
+import { ValidationError } from 'class-validator';
 import RouteConfig from './RouteConfig';
 import HttpStatusCode from '../types/http-status';
 import AuthenticationService from '../services/authentication';
@@ -7,7 +9,6 @@ import { PublicUser, UserCreateInput, UserLoginInput, UserLoginOutput, UserUpdat
 import { classValidatorMiddleware } from '../utils/classValidator';
 import { PostgresError, handlePostgresError } from '../errors/typeorm';
 import { authenticatedRequest } from '../utils/jwt';
-import { JwtPayload } from 'jsonwebtoken';
 import { AuthenticationErrors } from '../errors/authentication';
 
 class AuthenticationController extends RouteConfig {
@@ -24,7 +25,7 @@ class AuthenticationController extends RouteConfig {
         // create user
         this.app.post(
             `/${this.prefix}`,
-            classValidatorMiddleware(UserCreateInput),
+            [classValidatorMiddleware(UserCreateInput)],
             async (req: express.Request, res: express.Response) => {
                 const requestData = req.body;
                 try {
@@ -121,28 +122,33 @@ class AuthenticationController extends RouteConfig {
         );
 
         // login user
-        this.app.post(`/${this.prefix}/login`, async (req: express.Request, res: express.Response) => {
-            const requestData = req.body;
-            try {
-                const user: UserLoginInput = { ...requestData };
-                const result: UserLoginOutput = await this.login(user);
-                res.status(HttpStatusCode.OK).send({ result });
-            } catch (err) {
-                const errorMessage = { error: err.message };
-                if (err instanceof AuthenticationErrors.AuthenticationError) {
-                    res.status(HttpStatusCode.UNAUTHORIZED).send(errorMessage);
+        this.app.post(
+            `/${this.prefix}/login`,
+            classValidatorMiddleware(UserLoginInput),
+            async (req: express.Request, res: express.Response) => {
+                const requestData = req.body;
+                try {
+                    const user: UserLoginInput = { ...requestData };
+                    const result: UserLoginOutput = await this.login(user);
+                    res.status(HttpStatusCode.OK).send({ result });
+                } catch (err) {
+                    const errorMessage = { error: err.message };
+
+                    if (err instanceof AuthenticationErrors.AuthenticationError) {
+                        res.status(HttpStatusCode.UNAUTHORIZED).send(errorMessage);
+                        throw err;
+                    }
+
+                    if (err instanceof QueryFailedError) {
+                        const error: PostgresError = handlePostgresError(err);
+                        res.status(error.statusCode).send(errorMessage);
+                        throw error;
+                    }
+                    res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).send(errorMessage);
                     throw err;
                 }
-
-                if (err instanceof QueryFailedError) {
-                    const error: PostgresError = handlePostgresError(err);
-                    res.status(error.statusCode).send(errorMessage);
-                    throw error;
-                }
-                res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).send(errorMessage);
-                throw err;
-            }
-        });
+            },
+        );
 
         return this.app;
     }
@@ -185,6 +191,7 @@ class AuthenticationController extends RouteConfig {
 
     async login(user: UserLoginInput): Promise<UserLoginOutput> {
         try {
+            console.dir({ weeeeee: '' });
             const result = await this.authenticationService.authenticateUser(user);
             return result;
         } catch (err) {

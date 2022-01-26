@@ -1,7 +1,17 @@
 import { User } from '../types/user';
-import { Entity, PrimaryGeneratedColumn, Column, Generated, CreateDateColumn, OneToMany, ManyToMany, OneToOne, JoinColumn } from 'typeorm';
+import {
+    Entity,
+    PrimaryGeneratedColumn,
+    Column,
+    Generated,
+    CreateDateColumn,
+    OneToMany,
+    ManyToMany,
+    OneToOne,
+    JoinColumn,
+} from 'typeorm';
 import { TweetEntity } from './tweet';
-import { UserProfileEntity } from './user-profile'
+import { UserProfileEntity } from './user-profile';
 
 @Entity('user')
 export class UserEntity implements User {

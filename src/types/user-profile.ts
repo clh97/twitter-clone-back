@@ -1,4 +1,4 @@
-import { PublicUser } from "./user";
+import { PublicUser } from './user';
 
 type UserProfile = {
     user: PublicUser;
@@ -6,6 +6,6 @@ type UserProfile = {
     biography?: string;
     profileImage?: string;
     profileBackgroundImage?: string;
-}
+};
 
 export { UserProfile };

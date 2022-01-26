@@ -74,19 +74,22 @@ class TweetService {
 
     async likeTweet(userId: number, tweetId: number): Promise<Tweet> {
         try {
-            let tweet = await this.tweetRepository.findOne({ id: tweetId }, { relations: ['owner', 'likedBy'] });
+            const tweet = await this.tweetRepository.findOne({ id: tweetId }, { relations: ['owner', 'likedBy'] });
 
-            const alreadyLiked = tweet.likedBy.some(user => user.id == userId);
-            
+            const alreadyLiked = tweet.likedBy.some((user) => user.id == userId);
+
             if (alreadyLiked) {
-                const filtered = tweet.likedBy.filter(user => user.id != userId);
+                const filtered = tweet.likedBy.filter((user) => user.id != userId);
                 tweet.likedBy = filtered;
                 const updated = await this.tweetRepository.save(tweet);
                 return updated;
             } else {
                 tweet.likedBy.push({ id: userId });
                 await this.tweetRepository.save(tweet);
-                const updated = await this.tweetRepository.findOne({ id: tweetId }, { relations: ['owner', 'likedBy'] });
+                const updated = await this.tweetRepository.findOne(
+                    { id: tweetId },
+                    { relations: ['owner', 'likedBy'] },
+                );
                 return updated;
             }
         } catch (err) {

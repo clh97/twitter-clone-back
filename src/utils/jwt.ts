@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import HttpStatusCode from '../types/http-status';
-import HttpError from '../errors/http-error';
 
 function authenticatedRequest(req: Request, res: Response, next: NextFunction): void {
     if (!req.authenticated) {

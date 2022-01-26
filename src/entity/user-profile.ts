@@ -1,5 +1,16 @@
 import { UserProfile } from '../types/user-profile';
-import { Entity, PrimaryGeneratedColumn, Column, Generated, CreateDateColumn, OneToMany, ManyToMany, OneToOne, JoinColumn, UpdateDateColumn } from 'typeorm';
+import {
+    Entity,
+    PrimaryGeneratedColumn,
+    Column,
+    Generated,
+    CreateDateColumn,
+    OneToMany,
+    ManyToMany,
+    OneToOne,
+    JoinColumn,
+    UpdateDateColumn,
+} from 'typeorm';
 import { UserEntity } from './user';
 
 @Entity('profile')

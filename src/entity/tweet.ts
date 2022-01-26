@@ -48,8 +48,8 @@ export class TweetEntity implements Tweet {
         },
         inverseJoinColumn: {
             name: 'user',
-            referencedColumnName: 'id'
-        }
+            referencedColumnName: 'id',
+        },
     })
     likedBy: PublicUser[];
 
