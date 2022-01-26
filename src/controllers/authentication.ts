@@ -191,7 +191,6 @@ class AuthenticationController extends RouteConfig {
 
     async login(user: UserLoginInput): Promise<UserLoginOutput> {
         try {
-            console.dir({ weeeeee: '' });
             const result = await this.authenticationService.authenticateUser(user);
             return result;
         } catch (err) {
