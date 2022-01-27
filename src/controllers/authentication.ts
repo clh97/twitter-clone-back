@@ -30,6 +30,7 @@ class AuthenticationController extends RouteConfig {
                 const requestData = req.body;
                 try {
                     const user: UserCreateInput = { ...requestData };
+                    console.log(user);
                     const createdUser: PublicUser = await this.createUser(user);
                     res.status(HttpStatusCode.CREATED).send({ createdUser });
                 } catch (err) {

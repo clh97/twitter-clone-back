@@ -13,7 +13,6 @@ function authenticatedRequest(req: Request, res: Response, next: NextFunction): 
 function decodeTokenMiddleware(req: Request, res: Response, next: NextFunction): void {
     try {
         const token = String(req.headers['x-access-token']);
-        console.log(token);
         const decodedToken = jwt.decode(token);
 
         if (!decodedToken) {
