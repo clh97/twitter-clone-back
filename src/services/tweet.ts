@@ -16,8 +16,10 @@ class TweetService {
         try {
             const lastTweet = await this.tweetRepository.findOne({}, { order: { id: 'DESC' } });
 
-            if (tweet.replyTo == lastTweet.id) {
-                throw new TweetErrors.SelfReplyError();
+            if (lastTweet) {
+                if (tweet.replyTo == lastTweet.id) {
+                    throw new TweetErrors.SelfReplyError();
+                }
             }
 
             const createdTweet: Tweet = await this.tweetRepository.save({ ...tweet, createdBy: userId });
