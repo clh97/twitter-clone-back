@@ -29,7 +29,7 @@ const handlePostgresError = (error: QueryFailedError): PostgresError => {
         errorCode = HttpStatusCode.CONFLICT;
     }
 
-    return new PostgresError(error.message, errorCode);
+    return new PostgresError(err.detail, errorCode);
 };
 
 export { handlePostgresError, PostgresError };

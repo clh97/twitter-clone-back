@@ -1,9 +1,9 @@
 import moment from 'moment';
 import { validateOrReject } from 'class-validator';
 
-/* DD/MM/yyyy -> moment date */
+/* yyyy/MM/dd -> moment date */
 export const formatBirthdate = (birthdate: string): string => {
-    return moment(birthdate, 'DD/MM/YYYY').toISOString();
+    return moment(birthdate, 'yyyy/MM/dd').toISOString();
 };
 
 /* uses class-validator to validate decorator data from a class */

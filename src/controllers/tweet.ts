@@ -42,7 +42,7 @@ class TweetController extends RouteConfig {
 
                     if (err instanceof QueryFailedError) {
                         const error: PostgresError = handlePostgresError(err);
-                        res.status(error.statusCode).send(errorMessage);
+                        res.status(error.statusCode).send({ error: error.message });
                         throw error;
                     }
 
@@ -63,7 +63,7 @@ class TweetController extends RouteConfig {
 
                 if (err instanceof QueryFailedError) {
                     const error: PostgresError = handlePostgresError(err);
-                    res.status(error.statusCode).send(errorMessage);
+                    res.status(error.statusCode).send({ error: error.message });
                     throw error;
                 }
 
@@ -88,7 +88,7 @@ class TweetController extends RouteConfig {
 
                     if (err instanceof QueryFailedError) {
                         const error: PostgresError = handlePostgresError(err);
-                        res.status(error.statusCode).send(errorMessage);
+                        res.status(error.statusCode).send({ error: error.message });
                         throw error;
                     }
 
@@ -114,7 +114,7 @@ class TweetController extends RouteConfig {
 
                 if (err instanceof QueryFailedError) {
                     const error: PostgresError = handlePostgresError(err);
-                    res.status(error.statusCode).send(errorMessage);
+                    res.status(error.statusCode).send({ error: error.message });
                     throw error;
                 }
 
@@ -139,7 +139,7 @@ class TweetController extends RouteConfig {
 
                     if (err instanceof QueryFailedError) {
                         const error: PostgresError = handlePostgresError(err);
-                        res.status(error.statusCode).send(errorMessage);
+                        res.status(error.statusCode).send({ error: error.message });
                         throw error;
                     }
                     throw err;

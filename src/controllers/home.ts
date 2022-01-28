@@ -36,9 +36,11 @@ class HomeController extends RouteConfig {
 
                 if (err instanceof QueryFailedError) {
                     const error: PostgresError = handlePostgresError(err);
-                    res.status(error.statusCode).send(errorMessage);
+                    res.status(error.statusCode).send({ error: error.message });
                     throw error;
                 }
+
+                res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).send(errorMessage);
                 throw err;
             }
         });

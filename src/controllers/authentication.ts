@@ -1,7 +1,6 @@
 import express from 'express';
 import { QueryFailedError } from 'typeorm';
 import { JwtPayload } from 'jsonwebtoken';
-import { ValidationError } from 'class-validator';
 import RouteConfig from './RouteConfig';
 import HttpStatusCode from '../types/http-status';
 import AuthenticationService from '../services/authentication';
@@ -37,7 +36,7 @@ class AuthenticationController extends RouteConfig {
                     const errorMessage = { error: err.message };
                     if (err instanceof QueryFailedError) {
                         const error: PostgresError = handlePostgresError(err);
-                        res.status(error.statusCode).send(errorMessage);
+                        res.status(error.statusCode).send({ error: error.message });
                         throw error;
                     }
                     res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).send(errorMessage);
@@ -61,7 +60,7 @@ class AuthenticationController extends RouteConfig {
                     const errorMessage = { error: err.message };
                     if (err instanceof QueryFailedError) {
                         const error: PostgresError = handlePostgresError(err);
-                        res.status(error.statusCode).send(errorMessage);
+                        res.status(error.statusCode).send({ error: error.message });
                         throw error;
                     }
                     res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).send(errorMessage);
@@ -88,7 +87,7 @@ class AuthenticationController extends RouteConfig {
                     const errorMessage = { error: err.message };
                     if (err instanceof QueryFailedError) {
                         const error: PostgresError = handlePostgresError(err);
-                        res.status(error.statusCode).send(errorMessage);
+                        res.status(error.statusCode).send({ error: error.message });
                         throw error;
                     }
                     res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).send(errorMessage);
@@ -113,7 +112,7 @@ class AuthenticationController extends RouteConfig {
                     const errorMessage = { error: err.message };
                     if (err instanceof QueryFailedError) {
                         const error: PostgresError = handlePostgresError(err);
-                        res.status(error.statusCode).send(errorMessage);
+                        res.status(error.statusCode).send({ error: error.message });
                         throw error;
                     }
                     res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).send(errorMessage);
@@ -142,7 +141,7 @@ class AuthenticationController extends RouteConfig {
 
                     if (err instanceof QueryFailedError) {
                         const error: PostgresError = handlePostgresError(err);
-                        res.status(error.statusCode).send(errorMessage);
+                        res.status(error.statusCode).send({ error: error.message });
                         throw error;
                     }
                     res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).send(errorMessage);
