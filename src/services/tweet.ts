@@ -9,7 +9,6 @@ class TweetService {
 
     constructor(app: express.Application) {
         this.tweetRepository = app.get('db').getRepository(TweetEntity);
-        this.tweetRepository = app.get('db').getRepository(TweetEntity);
     }
 
     async createTweet(tweet: TweetCreateInput, userId: number): Promise<Tweet> {
