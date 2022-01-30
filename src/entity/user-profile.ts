@@ -21,6 +21,10 @@ export class UserProfileEntity implements UserProfile {
     @OneToOne(() => UserEntity, (user) => user.profile)
     user: UserEntity;
 
+    @OneToOne(() => UserEntity, (user) => user.id)
+    @JoinColumn({ name: 'ownerId', referencedColumnName: 'id' })
+    ownerId: number;
+
     @Column({ default: '' })
     title: string;
 

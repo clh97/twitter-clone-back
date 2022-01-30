@@ -1,6 +1,7 @@
 import { IsEmail, IsNotEmpty, IsOptional, Length, Matches, Min } from 'class-validator';
 import { UserProfileEntity } from '../entity/user-profile';
 import { Tweet } from './tweet';
+import { UserProfile } from './user-profile';
 
 type User = {
     id?: number;
@@ -70,6 +71,7 @@ type PublicUser = {
     id?: number;
     username?: string;
     email?: string;
+    profile?: UserProfile;
     birthdate?: string;
     uuid?: string;
 };

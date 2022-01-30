@@ -13,7 +13,7 @@ import { UserProfileEntity } from '../entity/user-profile';
 
 class AuthenticationService {
     userRepository: Repository<UserEntity>;
-    userProfileRepository: Repository<UserEntity>;
+    userProfileRepository: Repository<UserProfileEntity>;
 
     constructor(app: express.Application) {
         this.userRepository = app.get('db').getRepository(UserEntity);
@@ -31,6 +31,9 @@ class AuthenticationService {
                 profile,
             });
 
+            profile.ownerId = createdUser.id;
+            await this.userProfileRepository.save(profile);
+
             delete createdUser.id;
             delete createdUser.password;
             return createdUser as PublicUser;
@@ -42,6 +45,7 @@ class AuthenticationService {
     async readUser(id: number): Promise<PublicUser> {
         try {
             const foundUser: PublicUser = await this.userRepository.findOneOrFail({
+                relations: ['profile'],
                 where: { id },
             });
             return foundUser;

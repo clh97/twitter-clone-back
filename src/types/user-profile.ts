@@ -5,6 +5,7 @@ type UserProfile = {
     title?: string;
     biography?: string;
     profileImage?: string;
+    ownerId?: number;
     profileBackgroundImage?: string;
 };
 

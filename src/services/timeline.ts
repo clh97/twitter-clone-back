@@ -4,6 +4,7 @@ import { TweetEntity } from '../entity/tweet';
 import { UserEntity } from '../entity/user';
 import { Repository } from 'typeorm';
 import { Tweet } from '../types/tweet';
+import { UserProfileEntity } from '../entity/user-profile';
 
 class TimelineService {
     userRepository: Repository<UserEntity>;
@@ -31,7 +32,8 @@ class TimelineService {
                 .createQueryBuilder('twt')
                 .where('"createdBy" IN(:...ids)', { ids: timelineUserIds })
                 .andWhere('"replyTo" IS NULL')
-                .leftJoinAndSelect('twt.owner', 'owner')
+                .leftJoinAndMapOne('twt.owner', UserEntity, 'owner', 'twt.owner.id = owner.id')
+                .leftJoinAndMapOne('twt.profile', UserProfileEntity, 'profile', 'twt.owner.id = profile.ownerId')
                 .orderBy('"twt"."createdAt"', 'DESC')
                 .limit(10)
                 .getMany();
