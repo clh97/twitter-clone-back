@@ -142,6 +142,8 @@ class TweetController extends RouteConfig {
                         res.status(error.statusCode).send({ error: error.message });
                         throw error;
                     }
+
+                    res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).send(errorMessage);
                     throw err;
                 }
             },
