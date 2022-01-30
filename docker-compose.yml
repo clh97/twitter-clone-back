@@ -21,7 +21,12 @@ services:
         volumes:
             - ./db_init:/docker-entrypoint-initdb.d/
 
-    adminer:
-        image: adminer
+    pgadmin:
+        image: dpage/pgadmin4
+        environment:
+            PGADMIN_DEFAULT_EMAIL: 'michel@calheiros.dev'
+            PGADMIN_DEFAULT_PASSWORD: '123456'
+        logging:
+            driver: none
         ports:
-            - 8080:8080
+            - 8080:80
