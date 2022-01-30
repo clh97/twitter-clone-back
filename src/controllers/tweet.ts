@@ -74,7 +74,7 @@ class TweetController extends RouteConfig {
 
         // get all tweets from user
         this.app.get(
-            `/${this.prefix}/user`,
+            `/${this.prefix}/user/all`,
             [authenticatedRequest],
             async (req: express.Request, res: express.Response) => {
                 try {
