@@ -5,6 +5,7 @@ import { UserEntity } from '../entity/user';
 import { Repository } from 'typeorm';
 import { Tweet } from '../types/tweet';
 import { UserProfileEntity } from '../entity/user-profile';
+import { Timeline } from '../types/timeline';
 
 class TimelineService {
     userRepository: Repository<UserEntity>;
@@ -17,7 +18,7 @@ class TimelineService {
         this.userRepository = app.get('db').getRepository(UserEntity);
     }
 
-    async getTimeline(userId: number): Promise<Tweet[]> {
+    async getTimeline(userId: number): Promise<Timeline> {
         try {
             const timelineUserIdEntities = await this.connectionRepository.find({
                 where: { from: userId },
@@ -42,12 +43,16 @@ class TimelineService {
                 ...tweet,
                 profile: {
                     ...tweet.profile,
+                    ownerId: tweet.owner.id,
+                    ownerUsername: tweet.owner.username,
                     profileImage: `${process.env.STATIC_IMAGE_BASE_URL}/${tweet.profile.profileImage}`,
                     profileBackgroundImage: `${process.env.STATIC_IMAGE_BASE_URL}/${tweet.profile.profileBackgroundImage}`,
                 },
             }));
 
-            return tweetList;
+            const profiles = tweetList.map((tweet) => tweet.profile);
+
+            return { tweets: tweetList, profiles };
         } catch (err) {
             throw err;
         }

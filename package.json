@@ -2,7 +2,7 @@
   "name": "ts-backend",
   "version": "1.0.0",
   "description": "",
-  "main": "src/index.js",
+  "main": "index.js",
   "scripts": {
     "start:dev": "nodemon --watch 'src/' --exec 'ts-node --transpile-only src/server.ts' -e ts",
     "lint": "eslint '*/**/*.{js,ts,tsx}' --quiet --fix",
