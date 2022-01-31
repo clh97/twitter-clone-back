@@ -19,10 +19,12 @@ services:
         - EDGE_PORT=4566
         - SERVICES=s3
         ports:
-        - '4566-4583:4566-4583'
-        volumes: 
+            - '4566-4583:4566-4583'
+        volumes:
         - "${TEMPDIR:-/tmp/localstack}:/tmp/localstack"
         - "/var/run/docker.sock:/var/run/docker.sock"
+        - ./aws:/docker-entrypoint-initaws.d
+        - ./aws:/tmp/aws
 
     db:
         image: postgres

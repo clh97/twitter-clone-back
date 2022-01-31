@@ -31,10 +31,10 @@ export class UserProfileEntity implements UserProfile {
     @Column({ default: '' })
     biography: string;
 
-    @Column({ default: 'default-image.webp' })
+    @Column({ default: 'default-image.jpg' })
     profileImage: string;
 
-    @Column({ default: 'default-background-image.webp' })
+    @Column({ default: 'default-background-image.jpg' })
     profileBackgroundImage: string;
 
     @Column({ default: '' })

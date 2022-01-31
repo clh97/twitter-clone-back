@@ -28,7 +28,7 @@ class TimelineService {
 
             // returns list of tweets from users the authorized user follows,
             // unless it is a response for another tweet
-            const tweetList = await this.tweetRepository
+            let tweetList: Tweet[] = await this.tweetRepository
                 .createQueryBuilder('twt')
                 .where('"createdBy" IN(:...ids)', { ids: timelineUserIds })
                 .andWhere('"replyTo" IS NULL')
@@ -37,6 +37,16 @@ class TimelineService {
                 .orderBy('"twt"."createdAt"', 'DESC')
                 .limit(10)
                 .getMany();
+
+            tweetList = tweetList.map((tweet: Tweet) => ({
+                ...tweet,
+                profile: {
+                    ...tweet.profile,
+                    profileImage: `${process.env.STATIC_IMAGE_BASE_URL}/${tweet.profile.profileImage}`,
+                    profileBackgroundImage: `${process.env.STATIC_IMAGE_BASE_URL}/${tweet.profile.profileBackgroundImage}`,
+                },
+            }));
+
             return tweetList;
         } catch (err) {
             throw err;

@@ -1,5 +1,6 @@
 import { IsNotEmpty, IsOptional, MaxLength, MinLength } from 'class-validator';
 import { PublicUser } from './user';
+import { UserProfile } from './user-profile';
 
 interface GetUserTweetsQuery {
     cursor: number;
@@ -12,6 +13,7 @@ type Tweet = {
     content?: string;
     replyTo?: number;
     owner?: PublicUser;
+    profile?: UserProfile;
     likedBy?: PublicUser[];
     createdBy?: number;
     createdAt?: Date;
