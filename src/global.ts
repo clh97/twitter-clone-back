@@ -7,16 +7,16 @@ https://stackoverflow.com/questions/37377731/extend-express-request-object-using
 export {};
 
 declare global {
-    namespace Express {
-        interface Request {
-            authenticated?: boolean;
-            decodedToken?: string | JwtPayload;
-        }
+  namespace Express {
+    interface Request {
+      authenticated?: boolean;
+      decodedToken?: string | JwtPayload;
     }
+  }
 }
 
 declare module 'jsonwebtoken' {
-    export interface JwtPayload {
-        id: number;
-    }
+  export interface JwtPayload {
+    id: number;
+  }
 }
