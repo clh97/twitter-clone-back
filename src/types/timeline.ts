@@ -3,5 +3,5 @@ import { UserProfile } from './user-profile';
 
 export type Timeline = {
     tweets: Tweet[];
-    profiles: UserProfile[];
+    profiles?: UserProfile[];
 };

@@ -50,9 +50,7 @@ class TimelineService {
                 },
             }));
 
-            const profiles = tweetList.map((tweet) => tweet.profile);
-
-            return { tweets: tweetList, profiles };
+            return { tweets: tweetList };
         } catch (err) {
             throw err;
         }
