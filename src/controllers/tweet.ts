@@ -87,8 +87,6 @@ class TweetController extends RouteConfig {
             userId = parseInt(req.params.id as string);
           }
 
-          console.log({ userId });
-
           const { cursor, limit = 10 } = req.query as unknown as GetUserTweetsQuery;
           const tweets: Tweet[] = await this.paginateUserTweets(userId, limit, cursor);
           res.status(HttpStatusCode.OK).send(tweets);
