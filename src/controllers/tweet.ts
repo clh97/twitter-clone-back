@@ -74,13 +74,22 @@ class TweetController extends RouteConfig {
 
     // get all tweets from user
     this.app.get(
-      `/${this.prefix}/user/all`,
+      `/${this.prefix}/user/:id`,
       [authenticatedRequest],
       async (req: express.Request, res: express.Response) => {
         try {
-          const { cursor, limit = 10 } = req.query as unknown as GetUserTweetsQuery;
           const jwtPayload: JwtPayload = req.decodedToken as JwtPayload;
-          const userId: number = jwtPayload.id;
+
+          let userId: number;
+          if (req.params.id == 'all') {
+            userId = jwtPayload.id;
+          } else {
+            userId = parseInt(req.params.id as string);
+          }
+
+          console.log({ userId });
+
+          const { cursor, limit = 10 } = req.query as unknown as GetUserTweetsQuery;
           const tweets: Tweet[] = await this.paginateUserTweets(userId, limit, cursor);
           res.status(HttpStatusCode.OK).send(tweets);
         } catch (err) {
