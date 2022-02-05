@@ -31,7 +31,7 @@ class TweetController extends RouteConfig {
           const requestData: TweetCreateInput = req.body;
           const userId: number = jwtPayload.id;
           const tweet: Tweet = await this.createTweet(requestData, userId);
-          res.status(HttpStatusCode.CREATED).send(tweet);
+          res.status(HttpStatusCode.CREATED).send({ tweet });
         } catch (err) {
           const errorMessage = { error: err.message };
 
@@ -57,7 +57,7 @@ class TweetController extends RouteConfig {
       try {
         const tweetId = parseInt(req.params.id as string);
         const tweet: Tweet = await this.getTweetById(tweetId);
-        res.status(HttpStatusCode.OK).send(tweet);
+        res.status(HttpStatusCode.OK).send({ tweet });
       } catch (err) {
         const errorMessage = { error: err.message };
 
@@ -89,7 +89,7 @@ class TweetController extends RouteConfig {
 
           const { cursor, limit = 10 } = req.query as unknown as GetUserTweetsQuery;
           const tweets: Tweet[] = await this.paginateUserTweets(userId, limit, cursor);
-          res.status(HttpStatusCode.OK).send(tweets);
+          res.status(HttpStatusCode.OK).send({ tweets });
         } catch (err) {
           const errorMessage = { error: err.message };
 
@@ -115,7 +115,7 @@ class TweetController extends RouteConfig {
       try {
         const threadId = parseInt(req.params.id as string);
         const tweets = await this.getTweetThread(threadId);
-        res.status(HttpStatusCode.OK).send(tweets);
+        res.status(HttpStatusCode.OK).send({ tweets });
       } catch (err) {
         const errorMessage = { error: err.message };
 
@@ -140,7 +140,7 @@ class TweetController extends RouteConfig {
           const userId: number = jwtPayload.id;
           const tweetId = parseInt(req.params.id as string);
           const likedTweet = await this.likeTweet(userId, tweetId);
-          res.status(HttpStatusCode.OK).send(likedTweet);
+          res.status(HttpStatusCode.OK).send({ likedTweet });
         } catch (err) {
           const errorMessage = { error: err.message };
 
