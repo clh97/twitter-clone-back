@@ -1,7 +1,7 @@
 import express from 'express';
 import { JwtPayload } from 'jsonwebtoken';
 
-import RouteConfig from './RouteConfig';
+import RouteConfig from './route-config';
 import TimelineService from '../services/timeline';
 import { authenticatedRequest } from '../utils/jwt';
 import HttpStatusCode from '../types/http-status';

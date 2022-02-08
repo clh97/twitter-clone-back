@@ -1,5 +1,5 @@
 import express from 'express';
-import RouteConfig from './RouteConfig';
+import RouteConfig from './route-config';
 import ConnectionService from '../services/connection';
 import HttpStatusCode from '../types/http-status';
 import { classValidatorMiddleware } from '../utils/classValidator';

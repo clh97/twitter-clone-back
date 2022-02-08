@@ -1,5 +1,5 @@
 import express from 'express';
-import RouteConfig from './RouteConfig';
+import RouteConfig from './route-config';
 import TweetService from '../services/tweet';
 import HttpStatusCode from '../types/http-status';
 import { classValidatorMiddleware } from '../utils/classValidator';

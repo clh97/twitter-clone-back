@@ -1,6 +1,6 @@
 import express from 'express';
 
-import RouteConfig from './RouteConfig';
+import RouteConfig from './route-config';
 import HttpStatusCode from '../types/http-status';
 import { QueryFailedError } from 'typeorm';
 import { PostgresError, handlePostgresError } from '../errors/typeorm';

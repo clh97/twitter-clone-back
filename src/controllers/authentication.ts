@@ -1,7 +1,7 @@
 import express from 'express';
 import { QueryFailedError } from 'typeorm';
 import { JwtPayload } from 'jsonwebtoken';
-import RouteConfig from './RouteConfig';
+import RouteConfig from './route-config';
 import HttpStatusCode from '../types/http-status';
 import AuthenticationService from '../services/authentication';
 import { PublicUser, UserCreateInput, UserLoginInput, UserLoginOutput, UserUpdateInput } from '../types/user';

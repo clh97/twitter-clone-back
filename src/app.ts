@@ -11,7 +11,7 @@ import cors from 'cors';
 import initializeDatabase from './database';
 import logging from './logging';
 import controllers from './controllers';
-import RouteConfig from './controllers/RouteConfig';
+import RouteConfig from './controllers/route-config';
 
 import { decodeTokenMiddleware } from './utils/jwt';
 import { validationError } from './utils/classValidator';
