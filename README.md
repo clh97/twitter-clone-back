@@ -9,9 +9,6 @@ Typescript + express + postgresql + typeorm twitter clone
 -   [ ] totp 2fa authentication
 -   [ ] auth0 or OAuth
 -   [ ] understand express-winston logger - how to use the winston instance in the application? through express?
-
-# TWITTER
-
 -   [x] tweet as reply to another tweet
 -   [x] remove index pagination - use cursor instead
 -   [x] timeline for user
