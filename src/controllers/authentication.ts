@@ -34,6 +34,12 @@ class AuthenticationController extends RouteConfig {
           res.status(HttpStatusCode.CREATED).send({ createdUser });
         } catch (err) {
           const errorMessage = { error: err.message };
+
+          if (err instanceof AuthenticationErrors.AlreadyRegisteredError) {
+            res.status(HttpStatusCode.CONFLICT).send(errorMessage);
+            throw err;
+          }
+
           if (err instanceof QueryFailedError) {
             const error: PostgresError = handlePostgresError(err);
             res.status(error.statusCode).send({ error: error.message });

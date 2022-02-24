@@ -22,6 +22,14 @@ class AuthenticationService {
 
   async createUser(user: UserCreateInput): Promise<PublicUser> {
     try {
+      const [_, count] = await this.userRepository.findAndCount({
+        where: [{ username: user.username }, { email: user.email }],
+      });
+
+      if (count > 0) {
+        throw new AuthenticationErrors.AlreadyRegisteredError();
+      }
+
       const hashed = await argon2.hash(user.password);
       const profile = await this.userProfileRepository.save({});
       const createdUser = await this.userRepository.save({
