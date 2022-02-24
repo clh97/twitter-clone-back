@@ -82,6 +82,10 @@ class ExpressApp {
       });
       console.log(`Server started at http://localhost:${this.port}`);
     });
+
+    process.on('uncaughtException', function (err) {
+      console.error(err);
+    });
   }
 }
 
