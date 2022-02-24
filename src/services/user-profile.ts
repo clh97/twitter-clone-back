@@ -14,6 +14,9 @@ class UserProfileService {
     try {
       const profile = await this.userProfileRepository.findOne({ id: userId }, { relations: ['user'] });
 
+      profile.profileImage = `${process.env.STATIC_IMAGE_BASE_URL}/${profile.profileImage}`;
+      profile.profileBackgroundImage = `${process.env.STATIC_IMAGE_BASE_URL}/${profile.profileBackgroundImage}`;
+
       return profile;
     } catch (err) {
       throw err;
