@@ -19,8 +19,6 @@ function classValidatorMiddleware<T>(type: Constructor<T>): RequestHandler {
           validationErrorsHuman,
           validationErrors,
         });
-
-        next();
       } else {
         // if there are no validation errors, sanitize input and continue to the controller
         sanitize(inputObject);
